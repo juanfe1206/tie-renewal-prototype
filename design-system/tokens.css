@@ -1,0 +1,107 @@
+/* =========================================================================
+   Residence Renewal Service: design tokens
+   One source of truth for colour, type, spacing, radius and elevation.
+   Citizen app and officer app both import this file. Never hard-code a
+   colour or size in a component: use a token.
+   ========================================================================= */
+
+@import url("https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;600;700;800&family=IBM+Plex+Mono:wght@400;600&display=swap");
+
+:root {
+  /* ---- Brand ---------------------------------------------------------- */
+  --color-brand:          #0b2e4f;  /* header, primary surfaces           */
+  --color-brand-strong:   #071f36;  /* header bottom border, hover        */
+  --color-brand-tint:     #e8eef5;  /* subtle brand backgrounds           */
+
+  /* ---- Actions -------------------------------------------------------- */
+  --color-action:         #1a6b3c;  /* primary button (go forward)        */
+  --color-action-hover:   #145530;
+  --color-action-shadow:  #0d3a20;
+  --color-link:           #1d58a6;
+  --color-link-visited:   #5a3a8c;
+  --color-link-hover:     #0f3c78;
+
+  /* ---- Feedback (semantic, never decorative) -------------------------- */
+  --color-success:        #1a6b3c;
+  --color-success-tint:   #e6f2ea;
+  --color-info:           #1d58a6;
+  --color-info-tint:      #e8f0fa;
+  --color-warning:        #8a5a00;
+  --color-warning-tint:   #fff4d6;
+  --color-warning-edge:   #e0a800;
+  --color-error:          #b0201f;
+  --color-error-tint:     #fbe9e8;
+
+  /* ---- Neutrals (slightly blue-biased greys) ------------------------- */
+  --color-text:           #0c1622;
+  --color-text-secondary: #4a5664;
+  --color-border:         #b4bdc8;
+  --color-border-strong:  #0c1622;
+  --color-surface:        #ffffff;
+  --color-surface-alt:    #f3f5f8;
+  --color-page:           #ffffff;
+
+  /* ---- Focus (high-visibility, WCAG 2.2) ------------------------------ */
+  --color-focus:          #ffd43b;
+  --color-focus-text:     #0c1622;
+
+  /* ---- Prototype banner ---------------------------------------------- */
+  --color-proto:          #6b1d5c;
+
+  /* ---- Typography ----------------------------------------------------- */
+  --font-sans: "Public Sans", "Helvetica Neue", Arial, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+
+  --text-xs:   0.8125rem;  /* 13px  captions, legal                     */
+  --text-sm:   0.9375rem;  /* 15px  secondary text, tables              */
+  --text-md:   1.0625rem;  /* 17px  body                                */
+  --text-lg:   1.25rem;    /* 20px  lead paragraph, h3                  */
+  --text-xl:   1.625rem;   /* 26px  h2                                  */
+  --text-2xl:  2.25rem;    /* 36px  h1                                  */
+  --text-3xl:  2.75rem;    /* 44px  landing h1 only                     */
+
+  --weight-regular: 400;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+  --weight-heavy: 800;
+
+  --leading-tight: 1.2;
+  --leading-body:  1.55;
+  --measure: 65ch;         /* max line length for running text          */
+
+  /* ---- Spacing (4px grid) -------------------------------------------- */
+  --space-1: 0.25rem;  /*  4 */
+  --space-2: 0.5rem;   /*  8 */
+  --space-3: 0.75rem;  /* 12 */
+  --space-4: 1rem;     /* 16 */
+  --space-5: 1.5rem;   /* 24 */
+  --space-6: 2rem;     /* 32 */
+  --space-7: 3rem;     /* 48 */
+  --space-8: 4rem;     /* 64 */
+
+  /* ---- Shape ---------------------------------------------------------- */
+  --radius-sm: 2px;    /* inputs, buttons: government services stay square */
+  --radius-md: 6px;    /* cards, panels                                       */
+  --radius-pill: 999px;/* status tags only                                    */
+  --border-width: 2px;
+  --border-width-thick: 5px; /* left edge of notices and inset text */
+
+  /* ---- Layout --------------------------------------------------------- */
+  --page-max: 1020px;
+  --gutter: max(16px, env(safe-area-inset-left, 0px));
+
+  /* ---- Elevation (used sparingly: demo bar and phone preview only) ---- */
+  --shadow-sm: 0 1px 2px rgba(12, 22, 34, .12);
+  --shadow-lg: 0 8px 28px rgba(12, 22, 34, .22);
+}
+
+/* Assisted mode: larger type and spacing for people who need it.
+   Applied by adding .is-assisted to <html>. */
+html.is-assisted {
+  --text-sm:  1.0625rem;
+  --text-md:  1.25rem;
+  --text-lg:  1.5rem;
+  --text-xl:  1.875rem;
+  --text-2xl: 2.5rem;
+  --leading-body: 1.7;
+}
