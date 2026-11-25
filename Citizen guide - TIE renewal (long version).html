@@ -1,0 +1,567 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TIE Renewal Guide</title>
+<meta name="description" content="Student prototype. A citizen guide to a proposed service for renewing residence and the TIE card in Madrid.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fafaf8; --ink:#121212; --grey:#4a4a4a;
+  --red:#c4122f; --red2:#e61c39; --red3:#ff6b7f;
+  --pink:#fdecef; --pink-s:#f3c6ce;
+  --cream:#fff3e3; --cream-s:#f2d9b6;
+  --mint:#e8f6ef; --mint-s:#bfe3cf; --mint-ink:#1d6b45;
+  --sky:#eaf2fd; --sky-s:#c4d9f5;
+  --dark:#121212; --on-dark:#ffffff;
+  --card:#ffffff; --line:#ece7e1;
+  --radius:22px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Nunito",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:17px;line-height:1.55;overflow-x:hidden}
+img,svg{max-width:100%}
+a{color:var(--red)}
+a:focus-visible,button:focus-visible{outline:3px solid var(--red);outline-offset:3px;border-radius:8px}
+.skip{position:absolute;left:-999px;top:8px;background:var(--ink);color:#fff;padding:8px 14px;border-radius:10px;z-index:10}
+.skip:focus{left:16px}
+.wrap{max-width:1080px;margin:0 auto;padding:0 16px}
+section{padding:56px 0}
+.label{display:block;font-size:13px;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--red);margin-bottom:6px}
+h1,h2,h3{line-height:1.15;margin:0 0 12px;font-weight:900}
+h1{font-size:clamp(34px,6.2vw,60px);letter-spacing:-.02em}
+h2{font-size:clamp(26px,4vw,38px);letter-spacing:-.01em}
+h3{font-size:20px}
+p{margin:0 0 12px}
+.lead{font-size:clamp(18px,2.3vw,21px);color:var(--grey);max-width:640px}
+.card{background:var(--card);border:2px solid var(--line);border-radius:var(--radius);padding:22px}
+.pink{background:var(--pink);border-color:var(--pink-s)}
+.cream{background:var(--cream);border-color:var(--cream-s)}
+.mint{background:var(--mint);border-color:var(--mint-s)}
+.sky{background:var(--sky);border-color:var(--sky-s)}
+.dark{background:var(--dark);border-color:var(--dark);color:var(--on-dark)}
+.dark p{color:#e6e6e6}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr))}
+.g4{grid-template-columns:repeat(auto-fit,minmax(min(100%,210px),1fr))}
+.icon{width:52px;height:52px;flex:none}
+.row{display:flex;gap:14px;align-items:flex-start}
+.muted{color:var(--grey)}
+.small{font-size:14px}
+strong{font-weight:900}
+
+/* top bar */
+.proto{background:var(--ink);color:#fff;font-size:14px;font-weight:700;text-align:center;padding:9px 16px}
+.proto span{color:var(--red3)}
+nav.toc{background:#fff;border-bottom:2px solid var(--line);position:sticky;top:0;z-index:5}
+nav.toc ul{list-style:none;margin:0 auto;padding:10px 16px;display:flex;gap:18px;overflow-x:auto;max-width:1080px;scrollbar-width:none}
+nav.toc ul::-webkit-scrollbar{display:none}
+nav.toc a{color:var(--grey);text-decoration:none;font-weight:800;font-size:14px;white-space:nowrap}
+nav.toc a:hover{color:var(--red)}
+
+/* hero */
+.hero{padding:48px 0 40px;background:radial-gradient(circle at 85% 20%,var(--pink) 0,transparent 45%),radial-gradient(circle at 10% 90%,var(--cream) 0,transparent 40%)}
+.hero-grid{display:grid;grid-template-columns:1.3fr 1fr;gap:28px;align-items:center}
+.promise{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:22px}
+.promise .card{padding:16px;text-align:center}
+.promise b{display:block;font-size:19px;font-weight:900}
+.promise span{font-size:14px;color:var(--grey)}
+.mascot{animation:bob 3.5s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.speech{background:#fff;border:2px solid var(--pink-s);border-radius:18px;padding:12px 16px;font-weight:800;max-width:300px;margin:0 auto 8px;position:relative;text-align:center}
+.speech:after{content:"";position:absolute;bottom:-10px;left:50%;margin-left:-9px;border:9px solid transparent;border-top-color:var(--pink-s);border-bottom:0}
+.note{font-size:14px;color:var(--grey);margin-top:16px}
+
+/* who */
+.when{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:10px;align-items:center;margin-top:18px}
+.when .card{text-align:center;padding:18px}
+.when b{display:block;font-size:26px;font-weight:900;color:var(--red)}
+.arrow{font-size:26px;color:var(--red3);font-weight:900;text-align:center}
+
+/* journey */
+.legend{display:flex;gap:18px;flex-wrap:wrap;margin:6px 0 22px;font-weight:800}
+.legend i{display:inline-block;width:16px;height:16px;border-radius:5px;vertical-align:-2px;margin-right:6px}
+.step{display:grid;grid-template-columns:44px 1fr 46px 1fr;gap:12px;align-items:stretch;margin-bottom:14px}
+.num{width:44px;height:44px;border-radius:50%;background:var(--ink);color:#fff;font-weight:900;display:grid;place-items:center;align-self:center}
+.step .card{padding:16px 18px}
+.step h3{font-size:17px;margin-bottom:4px}
+.step p{margin:0;font-size:15.5px}
+.tag{font-size:12px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;display:block;margin-bottom:4px}
+.today .tag{color:#8a5a12}
+.new .tag{color:var(--red)}
+.today{position:relative}
+.today h3{text-decoration:line-through;text-decoration-color:var(--red3);text-decoration-thickness:2px}
+.swap{display:grid;place-items:center}
+.swap svg{width:40px;height:40px}
+.statbox{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:10px}
+.stat{background:var(--dark);color:#fff;border-radius:16px;padding:12px;text-align:center}
+.stat b{font-size:30px;font-weight:900;display:block;line-height:1}
+.stat span{font-size:13px;color:#e6e6e6}
+.src{font-size:12.5px;color:var(--grey);margin-top:8px}
+.soon{display:inline-block;background:#fff;border:2px dashed var(--red3);color:var(--red);font-weight:900;font-size:12px;border-radius:10px;padding:2px 8px;margin-top:6px}
+.total{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px}
+.total .card{text-align:center}
+.total b{font-size:clamp(26px,4vw,36px);display:block;font-weight:900}
+
+/* tracker demo */
+.tracker{list-style:none;margin:14px 0 0;padding:0}
+.tracker li{display:flex;gap:12px;align-items:center;padding:8px 0;font-weight:700;color:var(--grey)}
+.tracker .dot{width:26px;height:26px;border-radius:50%;border:3px solid var(--pink-s);background:#fff;flex:none;display:grid;place-items:center;transition:all .3s}
+.tracker li.done{color:var(--ink)}
+.tracker li.done .dot{background:var(--red);border-color:var(--red)}
+.tracker li.done .dot:after{content:"";width:8px;height:12px;border:solid #fff;border-width:0 3px 3px 0;transform:rotate(45deg) translate(-1px,-1px)}
+.tracker li.now .dot{border-color:var(--red);box-shadow:0 0 0 5px var(--pink)}
+.btn{font:inherit;font-weight:900;background:var(--red);color:#fff;border:0;border-radius:14px;padding:11px 18px;cursor:pointer;margin-top:10px}
+.btn:hover{background:#a50f27}
+.btn.ghost{background:#fff;color:var(--red);border:2px solid var(--pink-s)}
+
+/* steps */
+.three{counter-reset:s}
+.three .card{position:relative;padding-top:30px}
+.big-n{position:absolute;top:-18px;left:22px;width:44px;height:44px;border-radius:14px;background:var(--red);color:#fff;font-weight:900;font-size:22px;display:grid;place-items:center;transform:rotate(-6deg)}
+.three ul{margin:8px 0 0;padding-left:20px}
+.three li{margin-bottom:4px}
+
+/* notice mock */
+.phone{max-width:330px;margin:0 auto;background:#fff;border:3px solid var(--ink);border-radius:34px;padding:18px 16px 22px;box-shadow:8px 8px 0 var(--pink-s)}
+.phone .bar{width:80px;height:6px;border-radius:6px;background:var(--line);margin:0 auto 14px}
+.notice{background:var(--cream);border:2px solid var(--cream-s);border-radius:16px;padding:14px}
+.notice h4{margin:0 0 6px;font-size:16px;font-weight:900}
+.clock{display:flex;align-items:center;gap:10px;background:var(--ink);color:#fff;border-radius:14px;padding:10px 12px;margin-top:12px;font-weight:800;font-size:15px}
+.ex{font-size:12px;color:var(--grey);text-align:center;margin-top:10px}
+
+/* rule cards */
+.rule{display:flex;gap:14px;align-items:center}
+.rule b{font-size:19px;line-height:1.25}
+
+/* people */
+.person{text-align:left}
+.person .face{width:84px;height:84px;margin-bottom:8px}
+.person .result{display:inline-block;margin-top:8px;background:var(--mint);border:2px solid var(--mint-s);color:var(--mint-ink);font-weight:900;border-radius:12px;padding:4px 10px;font-size:14px}
+.mini{list-style:none;padding:0;margin:10px 0 0;font-size:15px}
+.mini li{padding-left:22px;position:relative;margin-bottom:5px}
+.mini li:before{content:"";position:absolute;left:4px;top:8px;width:9px;height:9px;border-radius:50%;background:var(--red3)}
+
+/* langs */
+.langs{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:12px}
+.langs div{background:#fff;border:2px solid var(--pink-s);border-radius:14px;padding:10px;text-align:center;font-weight:900}
+.langs small{display:block;font-weight:700;color:var(--grey);font-size:12px}
+
+footer{background:var(--ink);color:#e6e6e6;padding:28px 0 36px;font-size:14px}
+footer strong{color:#fff}
+footer .wrap{display:flex;gap:14px;align-items:center}
+
+@media (max-width:820px){
+  .hero-grid{grid-template-columns:1fr}
+  .hero-art{order:-1;max-width:260px;margin:0 auto}
+  .step{grid-template-columns:1fr;gap:8px;padding:14px;border-radius:var(--radius);background:#fff;border:2px solid var(--line)}
+  .num{width:36px;height:36px}
+  .swap svg{transform:rotate(90deg);width:32px;height:32px}
+  .when{grid-template-columns:1fr}
+  .when .arrow{transform:rotate(90deg)}
+}
+@media (max-width:520px){
+  body{font-size:16px}
+  section{padding:40px 0}
+  .promise{grid-template-columns:1fr}
+  .langs{grid-template-columns:repeat(2,1fr)}
+  .total{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to the guide</a>
+
+<div class="proto" role="note">Student prototype <span>|</span> Proposed service design, not an official government service</div>
+
+<nav class="toc" aria-label="Sections of this guide">
+  <ul>
+    <li><a href="#who">Who it is for</a></li>
+    <li><a href="#journey">Before and after</a></li>
+    <li><a href="#start">How to start</a></li>
+    <li><a href="#fix">Fix-it</a></li>
+    <li><a href="#flags">Red flags</a></li>
+    <li><a href="#appeal">If you disagree</a></li>
+    <li><a href="#help">Help</a></li>
+    <li><a href="#people">Meet 3 people</a></li>
+    <li><a href="#rights">Your rights and AI</a></li>
+  </ul>
+</nav>
+
+<main id="main">
+
+<!-- 1 HERO -->
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <span class="label">Renew your residence and TIE in Madrid</span>
+      <h1>Renew your residence and TIE in days, not months</h1>
+      <p class="lead"><strong>One online request. One police visit. Live status.</strong></p>
+      <div class="promise">
+        <div class="card pink"><b>1 request</b><span>online, pre-filled</span></div>
+        <div class="card cream"><b>1 visit</b><span>to the police for fingerprints</span></div>
+        <div class="card sky"><b>Live status</b><span>every update sent to you</span></div>
+      </div>
+      <p class="note">People often call this "renewing the NIE". Your NIE number never expires. What you renew is your <strong>residence permit</strong> and your <strong>TIE card</strong>.</p>
+    </div>
+    <div class="hero-art">
+      <p class="speech">Hi, I am Tico. I will walk you through it.</p>
+      <svg class="mascot" viewBox="0 0 240 220" role="img" aria-label="Tico, a smiling cartoon ID card with arms, waving hello">
+        <ellipse cx="120" cy="208" rx="70" ry="8" fill="#f3c6ce" opacity=".6"/>
+        <path d="M36 110 C14 96 12 76 22 66" stroke="#121212" stroke-width="7" fill="none" stroke-linecap="round"/>
+        <circle cx="22" cy="62" r="10" fill="#fff3e3" stroke="#121212" stroke-width="4"/>
+        <path d="M204 120 C222 132 226 150 218 160" stroke="#121212" stroke-width="7" fill="none" stroke-linecap="round"/>
+        <circle cx="218" cy="164" r="10" fill="#fff3e3" stroke="#121212" stroke-width="4"/>
+        <rect x="36" y="40" width="168" height="150" rx="24" fill="#fdecef" stroke="#121212" stroke-width="5"/>
+        <rect x="36" y="40" width="168" height="34" rx="24" fill="#ff6b7f" stroke="#121212" stroke-width="5"/>
+        <rect x="39" y="60" width="162" height="12" fill="#ff6b7f"/>
+        <text x="120" y="64" text-anchor="middle" font-family="Nunito,sans-serif" font-weight="900" font-size="17" fill="#121212">TIE</text>
+        <circle cx="94" cy="118" r="9" fill="#121212"/><circle cx="146" cy="118" r="9" fill="#121212"/>
+        <circle cx="97" cy="115" r="3" fill="#fff"/><circle cx="149" cy="115" r="3" fill="#fff"/>
+        <circle cx="78" cy="138" r="9" fill="#ff6b7f" opacity=".45"/><circle cx="162" cy="138" r="9" fill="#ff6b7f" opacity=".45"/>
+        <path d="M104 142 Q120 158 136 142" stroke="#121212" stroke-width="5" fill="none" stroke-linecap="round"/>
+        <rect x="60" y="164" width="60" height="8" rx="4" fill="#f3c6ce"/><rect x="128" y="164" width="44" height="8" rx="4" fill="#f3c6ce"/>
+        <path d="M200 30 l6 12 l12 6 l-12 6 l-6 12 l-6 -12 l-12 -6 l12 -6z" fill="#f2d9b6"/>
+        <path d="M30 22 l4 8 l8 4 l-8 4 l-4 8 l-4 -8 l-8 -4 l8 -4z" fill="#f3c6ce"/>
+      </svg>
+    </div>
+  </div>
+</header>
+
+<!-- 2 WHO -->
+<section id="who" aria-labelledby="who-h">
+  <div class="wrap">
+    <span class="label">Who it is for</span>
+    <h2 id="who-h">Made for non-EU residents in Madrid</h2>
+    <div class="grid g4" style="margin-top:18px">
+      <div class="card pink row">
+        <svg class="icon" viewBox="0 0 52 52" aria-hidden="true"><rect x="6" y="14" width="40" height="30" rx="7" fill="#fff" stroke="#121212" stroke-width="3"/><path d="M18 14v-4a4 4 0 0 1 4-4h8a4 4 0 0 1 4 4v4" fill="none" stroke="#121212" stroke-width="3"/><rect x="6" y="24" width="40" height="5" fill="#ff6b7f"/></svg>
+        <div><h3>Workers</h3><p class="small">Your residence and work permit is expiring.</p></div>
+      </div>
+      <div class="card cream row">
+        <svg class="icon" viewBox="0 0 52 52" aria-hidden="true"><circle cx="26" cy="18" r="9" fill="#fff" stroke="#121212" stroke-width="3"/><path d="M10 46c2-10 9-15 16-15s14 5 16 15" fill="#fff" stroke="#121212" stroke-width="3"/><path d="M40 30v16" stroke="#121212" stroke-width="3" stroke-linecap="round"/><path d="M40 30c0-3 5-3 5 0" fill="none" stroke="#121212" stroke-width="3" stroke-linecap="round"/></svg>
+        <div><h3>Retirees</h3><p class="small">You hold a non-lucrative permit.</p></div>
+      </div>
+      <div class="card sky row">
+        <svg class="icon" viewBox="0 0 52 52" aria-hidden="true"><circle cx="18" cy="18" r="7" fill="#fff" stroke="#121212" stroke-width="3"/><circle cx="36" cy="20" r="6" fill="#fff" stroke="#121212" stroke-width="3"/><path d="M6 44c1-9 6-13 12-13s11 4 12 13M28 44c1-7 4-10 8-10s8 3 9 10" fill="#fff" stroke="#121212" stroke-width="3"/><path d="M26 8l2 3 3 1-3 1-2 3-2-3-3-1 3-1z" fill="#ff6b7f"/></svg>
+        <div><h3>Families</h3><p class="small">You hold a family-reunification permit.</p></div>
+      </div>
+      <div class="card mint row">
+        <svg class="icon" viewBox="0 0 52 52" aria-hidden="true"><path d="M8 28l10-10 8 6 8-6 10 10-18 16z" fill="#fff" stroke="#121212" stroke-width="3" stroke-linejoin="round"/><path d="M18 18l8 8M34 18l-8 8" stroke="#121212" stroke-width="3"/></svg>
+        <div><h3>Anyone who needs help</h3><p class="small">Limited Spanish, a disability, or no digital ID.</p></div>
+      </div>
+    </div>
+
+    <h3 style="margin-top:34px">When it is useful</h3>
+    <div class="when" role="list">
+      <div class="card cream" role="listitem"><b>~90 days</b>before expiry you get a reminder</div>
+      <div class="arrow" aria-hidden="true">&rarr;</div>
+      <div class="card pink" role="listitem"><b>2 months</b>before expiry you can file</div>
+      <div class="arrow" aria-hidden="true">&rarr;</div>
+      <div class="card sky" role="listitem"><b>Expiry date</b>of your current permit</div>
+    </div>
+  </div>
+</section>
+
+<!-- 3 JOURNEY -->
+<section id="journey" aria-labelledby="journey-h" style="background:#fff;border-top:2px solid var(--line);border-bottom:2px solid var(--line)">
+  <div class="wrap">
+    <span class="label">Before and after</span>
+    <h2 id="journey-h">Six steps, each one made easier</h2>
+    <div class="legend" aria-hidden="true">
+      <span><i style="background:var(--cream);border:2px solid var(--cream-s)"></i>Today</span>
+      <span><i style="background:var(--pink);border:2px solid var(--pink-s)"></i>New service</span>
+    </div>
+
+    <ol style="list-style:none;padding:0;margin:0">
+      <li class="step">
+        <div class="num" aria-hidden="true">1</div>
+        <div class="card cream today"><span class="tag">Today</span><h3>You remember the deadline yourself</h3><p>Nobody tells you when your permit is about to expire.</p></div>
+        <div class="swap" aria-hidden="true"><svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="#fdecef"/><path d="M12 20h14m-5-6 6 6-6 6" stroke="#c4122f" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="card pink new"><span class="tag">New</span><h3>An automatic reminder</h3><p>You get a message about 90 days before expiry.</p></div>
+      </li>
+      <li class="step">
+        <div class="num" aria-hidden="true">2</div>
+        <div class="card cream today"><span class="tag">Today</span><h3>You re-upload papers they already have</h3><p>You file the renewal with Extranjería and send the same documents again.</p></div>
+        <div class="swap" aria-hidden="true"><svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="#fdecef"/><path d="M12 20h14m-5-6 6 6-6 6" stroke="#c4122f" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="card pink new"><span class="tag">New</span><h3>One pre-filled online request</h3><p>It uses data the administration already holds. You confirm "nothing changed" and pay the fee online.</p></div>
+      </li>
+      <li class="step">
+        <div class="num" aria-hidden="true">3</div>
+        <div class="card cream today"><span class="tag">Today</span><h3>You wait with no clear status</h3><p>In Madrid the wait was long.</p>
+          <div class="statbox">
+            <div class="stat"><b>88 days</b><span>average wait</span></div>
+            <div class="stat"><b>65%</b><span>decided within 90 days</span></div>
+          </div>
+          <p class="src">Source: Ministerio de Inclusión data, January 2025.</p>
+        </div>
+        <div class="swap" aria-hidden="true"><svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="#fdecef"/><path d="M12 20h14m-5-6 6 6-6 6" stroke="#c4122f" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="card pink new"><span class="tag">New</span><h3>A live status tracker</h3><p>Every update is sent to you. <strong>Clear-cut renewals are decided within 5 working days</strong> (target).</p>
+          <ol class="tracker" id="tracker" aria-live="polite">
+            <li class="done"><span class="dot" aria-hidden="true"></span>Request received</li>
+            <li class="now"><span class="dot" aria-hidden="true"></span>Checking your data</li>
+            <li><span class="dot" aria-hidden="true"></span>Decision</li>
+            <li><span class="dot" aria-hidden="true"></span>Fingerprint appointment</li>
+            <li><span class="dot" aria-hidden="true"></span>Card ready</li>
+          </ol>
+          <button class="btn ghost" id="trackBtn" type="button">See the next update</button>
+          <p class="src">Example tracker, for illustration.</p>
+        </div>
+      </li>
+      <li class="step">
+        <div class="num" aria-hidden="true">4</div>
+        <div class="card cream today"><span class="tag">Today</span><h3>You hunt for a "cita de huellas"</h3><p>In Madrid a police fingerprint appointment takes weeks to months to find. Bots and resellers grab the slots.</p></div>
+        <div class="swap" aria-hidden="true"><svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="#fdecef"/><path d="M12 20h14m-5-6 6 6-6 6" stroke="#c4122f" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="card pink new"><span class="tag">New</span><h3>Your appointment is assigned for you</h3><p>It comes with the decision, within 10 working days. You can reschedule it once. No hunting, no bots.</p></div>
+      </li>
+      <li class="step">
+        <div class="num" aria-hidden="true">5</div>
+        <div class="card cream today"><span class="tag">Today</span><h3>The fingerprint appointment</h3><p>You go to the police for your fingerprints.</p></div>
+        <div class="swap" aria-hidden="true"><svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="#fdecef"/><path d="M12 20h14m-5-6 6 6-6 6" stroke="#c4122f" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="card pink new"><span class="tag">New</span><h3>One police visit</h3><p>You go once, for your fingerprints.</p></div>
+      </li>
+      <li class="step">
+        <div class="num" aria-hidden="true">6</div>
+        <div class="card cream today"><span class="tag">Today</span><h3>A second trip to collect the card</h3><p>You go back 1 to 2 months later.</p></div>
+        <div class="swap" aria-hidden="true"><svg viewBox="0 0 40 40"><circle cx="20" cy="20" r="18" fill="#fdecef"/><path d="M12 20h14m-5-6 6 6-6 6" stroke="#c4122f" stroke-width="3.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div class="card pink new"><span class="tag">New</span><h3>Card ready within 15 days</h3><p>Counted from your fingerprint appointment.</p><span class="soon">Coming soon (proposed): card by post or locker</span></div>
+      </li>
+    </ol>
+
+    <div class="total">
+      <div class="card cream"><span class="tag" style="color:#8a5a12">Today</span><b>2 trips</b><span class="muted">and a long wait with no status</span></div>
+      <div class="card dark"><span class="tag" style="color:var(--red3)">New</span><b>1 trip</b><span>and every update sent to you</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 4 START -->
+<section id="start" aria-labelledby="start-h">
+  <div class="wrap">
+    <span class="label">How to start</span>
+    <h2 id="start-h">Three steps to file your renewal</h2>
+    <div class="grid g3 three" style="margin-top:34px">
+      <div class="card pink">
+        <div class="big-n" aria-hidden="true">1</div>
+        <svg class="icon" viewBox="0 0 52 52" aria-hidden="true"><rect x="6" y="12" width="40" height="28" rx="6" fill="#fff" stroke="#121212" stroke-width="3"/><path d="M6 16l20 14 20-14" fill="none" stroke="#121212" stroke-width="3"/><circle cx="42" cy="12" r="7" fill="#ff6b7f" stroke="#121212" stroke-width="3"/></svg>
+        <h3>Get the reminder</h3>
+        <p>It comes by SMS, email or letter. Or go to the service page.</p>
+      </div>
+      <div class="card cream">
+        <div class="big-n" aria-hidden="true">2</div>
+        <svg class="icon" viewBox="0 0 52 52" aria-hidden="true"><rect x="12" y="22" width="28" height="22" rx="5" fill="#fff" stroke="#121212" stroke-width="3"/><path d="M18 22v-6a8 8 0 0 1 16 0v6" fill="none" stroke="#121212" stroke-width="3"/><circle cx="26" cy="33" r="3.5" fill="#c4122f"/></svg>
+        <h3>Sign in</h3>
+        <p>Use <strong>Cl@ve</strong> or a <strong>digital certificate</strong>. No digital ID? Ask for assisted or in-person help.</p>
+      </div>
+      <div class="card sky">
+        <div class="big-n" aria-hidden="true">3</div>
+        <svg class="icon" viewBox="0 0 52 52" aria-hidden="true"><rect x="10" y="6" width="32" height="40" rx="6" fill="#fff" stroke="#121212" stroke-width="3"/><path d="M17 26l6 6 12-13" fill="none" stroke="#c4122f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        <h3>Confirm, pay and submit</h3>
+        <ul>
+          <li>Confirm your data.</li>
+          <li>Say whether anything changed.</li>
+          <li>Pay the fee online: <strong>Modelo 790-012</strong>, about <strong>&euro;16&ndash;22</strong>.</li>
+          <li>Submit.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 5 FIX-IT -->
+<section id="fix" aria-labelledby="fix-h" style="background:var(--cream)">
+  <div class="wrap grid g2" style="align-items:center">
+    <div>
+      <span class="label">If something is missing</span>
+      <h2 id="fix-h">Fix it in one click</h2>
+      <div class="grid" style="margin-top:16px">
+        <div class="card rule"><svg class="icon" viewBox="0 0 52 52" aria-hidden="true"><rect x="8" y="6" width="36" height="40" rx="6" fill="#fdecef" stroke="#121212" stroke-width="3"/><path d="M16 18h20M16 26h20M16 34h12" stroke="#121212" stroke-width="3" stroke-linecap="round"/></svg><div><b>A plain notice</b><p class="small muted">It says exactly what is wrong.</p></div></div>
+        <div class="card rule"><svg class="icon" viewBox="0 0 52 52" aria-hidden="true"><circle cx="26" cy="26" r="19" fill="#fdecef" stroke="#121212" stroke-width="3"/><path d="M19 26l5 5 10-11" fill="none" stroke="#c4122f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg><div><b>A one-click fix</b><p class="small muted">For example, pay a &euro;2.10 fee difference.</p></div></div>
+        <div class="card rule"><svg class="icon" viewBox="0 0 52 52" aria-hidden="true"><circle cx="26" cy="28" r="17" fill="#fff3e3" stroke="#121212" stroke-width="3"/><rect x="20" y="20" width="4" height="16" rx="2" fill="#121212"/><rect x="28" y="20" width="4" height="16" rx="2" fill="#121212"/><path d="M20 6h12" stroke="#121212" stroke-width="3" stroke-linecap="round"/></svg><div><b>10 days to fix it</b><p class="small muted">The decision clock pauses while you fix it.</p></div></div>
+      </div>
+      <p style="margin-top:16px;font-size:20px"><strong>No surprise refusals.</strong></p>
+    </div>
+    <div>
+      <div class="phone" role="img" aria-label="Example phone screen. A notice says the fee paid is 2 euros 10 cents short, with a button to pay the difference, and a bar saying clock paused, 10 days left.">
+        <div class="bar"></div>
+        <div class="notice">
+          <h4>One thing to fix</h4>
+          <p class="small" style="margin:0">The fee you paid is &euro;2.10 short.</p>
+          <span class="btn" style="display:block;text-align:center;margin-top:12px">Pay &euro;2.10 now</span>
+        </div>
+        <div class="clock">
+          <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><circle cx="13" cy="13" r="11" fill="none" stroke="#ff6b7f" stroke-width="3"/><rect x="9" y="8" width="3" height="10" rx="1.5" fill="#fff"/><rect x="14" y="8" width="3" height="10" rx="1.5" fill="#fff"/></svg>
+          Clock paused, 10 days left
+        </div>
+      </div>
+      <p class="ex">Example screen, for illustration.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 6 RED FLAGS -->
+<section id="flags" aria-labelledby="flags-h">
+  <div class="wrap">
+    <span class="label">If there is a problem</span>
+    <h2 id="flags-h">A person reviews it, not a computer</h2>
+    <div class="grid g3" style="margin-top:18px">
+      <div class="card pink">
+        <svg class="icon" viewBox="0 0 52 52" aria-hidden="true"><circle cx="22" cy="22" r="13" fill="#fff" stroke="#121212" stroke-width="3"/><path d="M32 32l12 12" stroke="#121212" stroke-width="5" stroke-linecap="round"/><path d="M17 22h10" stroke="#c4122f" stroke-width="3" stroke-linecap="round"/></svg>
+        <h3>You see each issue</h3><p>Each one comes with its evidence.</p>
+      </div>
+      <div class="card cream">
+        <svg class="icon" viewBox="0 0 52 52" aria-hidden="true"><rect x="7" y="10" width="38" height="34" rx="6" fill="#fff" stroke="#121212" stroke-width="3"/><path d="M7 20h38" stroke="#121212" stroke-width="3"/><path d="M16 6v8M36 6v8" stroke="#121212" stroke-width="3" stroke-linecap="round"/><rect x="14" y="27" width="8" height="8" rx="2" fill="#ff6b7f"/></svg>
+        <h3>10 to 15 days to respond</h3><p>You answer before any decision is made.</p>
+      </div>
+      <div class="card sky">
+        <svg class="icon" viewBox="0 0 52 52" aria-hidden="true"><circle cx="26" cy="17" r="9" fill="#fff" stroke="#121212" stroke-width="3"/><path d="M9 46c2-11 9-16 17-16s15 5 17 16" fill="#fff" stroke="#121212" stroke-width="3"/></svg>
+        <h3>Nationality is never used</h3><p>It is not part of any check.</p>
+      </div>
+    </div>
+    <div class="grid g2" style="margin-top:16px">
+      <div class="card dark rule"><svg class="icon" viewBox="0 0 52 52" aria-hidden="true"><circle cx="26" cy="26" r="20" fill="#1d6b45"/><path d="M17 26l6 6 12-13" fill="none" stroke="#fff" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/></svg><b>Automation can approve.</b></div>
+      <div class="card dark rule"><svg class="icon" viewBox="0 0 52 52" aria-hidden="true"><circle cx="26" cy="18" r="9" fill="#ff6b7f"/><path d="M9 46c2-11 9-16 17-16s15 5 17 16" fill="#ff6b7f"/></svg><b>Only a person can refuse.</b></div>
+    </div>
+  </div>
+</section>
+
+<!-- 7 APPEAL -->
+<section id="appeal" aria-labelledby="appeal-h" style="background:#fff;border-top:2px solid var(--line);border-bottom:2px solid var(--line)">
+  <div class="wrap">
+    <span class="label">If you disagree</span>
+    <h2 id="appeal-h">You can ask for a new look</h2>
+    <div class="grid g2" style="margin-top:18px">
+      <div class="card pink">
+        <span class="tag" style="color:var(--red)">Option 1, optional</span>
+        <h3>Recurso de reposición</h3>
+        <p><strong>Within 1 month.</strong> A different official decides.</p>
+      </div>
+      <div class="card cream">
+        <span class="tag" style="color:#8a5a12">Option 2</span>
+        <h3>Go to the courts</h3>
+        <p><strong>Within 2 months.</strong></p>
+      </div>
+    </div>
+    <p style="margin-top:14px;font-weight:800">You can file appeals online.</p>
+  </div>
+</section>
+
+<!-- 8 HELP -->
+<section id="help" aria-labelledby="help-h">
+  <div class="wrap grid g2" style="align-items:center">
+    <div>
+      <span class="label">Help for everyone</span>
+      <h2 id="help-h">Help in your language, online or in person</h2>
+      <ul class="mini" style="font-size:17px">
+        <li>Messages in 4 languages</li>
+        <li>Plain language</li>
+        <li>An assisted digital channel</li>
+        <li><strong>In-person service is always available, at every step</strong></li>
+      </ul>
+    </div>
+    <div class="card pink">
+      <h3>Messages in</h3>
+      <div class="langs">
+        <div lang="es">Hola<small>Español</small></div>
+        <div lang="en">Hello<small>English</small></div>
+        <div lang="fr">Bonjour<small>Français</small></div>
+        <div lang="ar" dir="rtl">مرحبا<small>العربية</small></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 9 PEOPLE -->
+<section id="people" aria-labelledby="people-h" style="background:var(--pink)">
+  <div class="wrap">
+    <span class="label">Meet 3 people</span>
+    <h2 id="people-h">Three renewals, three paths</h2>
+    <p class="muted small">These people are fictional.</p>
+    <div class="grid g3" style="margin-top:14px">
+      <article class="card person">
+        <svg class="face" viewBox="0 0 84 84" role="img" aria-label="Illustration of Amina"><circle cx="42" cy="42" r="40" fill="#fff3e3"/><path d="M18 46c0-20 10-30 24-30s24 10 24 30v18H18z" fill="#7a4a8c"/><circle cx="42" cy="44" r="17" fill="#c98b62"/><circle cx="36" cy="43" r="2.4" fill="#121212"/><circle cx="48" cy="43" r="2.4" fill="#121212"/><path d="M36 51q6 5 12 0" stroke="#121212" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M18 84c2-14 12-20 24-20s22 6 24 20" fill="#ff6b7f"/></svg>
+        <h3>Amina</h3>
+        <p class="small muted">Employee. Nothing changed.</p>
+        <ul class="mini"><li>Got the reminder</li><li>Confirmed "nothing changed" and paid</li><li>Approved</li></ul>
+        <span class="result">Renewed in 2 days</span>
+      </article>
+      <article class="card person">
+        <svg class="face" viewBox="0 0 84 84" role="img" aria-label="Illustration of Robert"><circle cx="42" cy="42" r="40" fill="#eaf2fd"/><circle cx="42" cy="44" r="17" fill="#f1c9a5"/><path d="M25 40c0-12 8-17 17-17s17 5 17 17c-3-6-8-8-17-8s-14 2-17 8z" fill="#d9d9d9"/><circle cx="36" cy="44" r="5" fill="none" stroke="#121212" stroke-width="2"/><circle cx="48" cy="44" r="5" fill="none" stroke="#121212" stroke-width="2"/><path d="M41 44h2" stroke="#121212" stroke-width="2"/><path d="M36 52q6 5 12 0" stroke="#121212" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M18 84c2-14 12-20 24-20s22 6 24 20" fill="#4a6fa5"/></svg>
+        <h3>Robert</h3>
+        <p class="small muted">Retiree. Paid the wrong fee.</p>
+        <ul class="mini"><li>Got a plain notice</li><li>Fixed it in one click</li><li>Approved</li></ul>
+        <span class="result">Approved</span>
+      </article>
+      <article class="card person">
+        <svg class="face" viewBox="0 0 84 84" role="img" aria-label="Illustration of Lucía"><circle cx="42" cy="42" r="40" fill="#e8f6ef"/><path d="M22 50c0-22 9-32 20-32s20 10 20 32v14H22z" fill="#3b2a20"/><circle cx="42" cy="44" r="17" fill="#e0ac84"/><path d="M26 40c4-10 10-14 16-14s12 4 16 14c-6-4-10-6-16-6s-10 2-16 6z" fill="#3b2a20"/><circle cx="36" cy="44" r="2.4" fill="#121212"/><circle cx="48" cy="44" r="2.4" fill="#121212"/><path d="M36 52q6 5 12 0" stroke="#121212" stroke-width="2.5" fill="none" stroke-linecap="round"/><path d="M18 84c2-14 12-20 24-20s22 6 24 20" fill="#f2d9b6"/></svg>
+        <h3>Lucía</h3>
+        <p class="small muted">Family-reunification permit.</p>
+        <ul class="mini"><li>A data mismatch was flagged</li><li>She responded</li><li>Approved</li></ul>
+        <span class="result">Approved</span>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- 10 RIGHTS -->
+<section id="rights" aria-labelledby="rights-h">
+  <div class="wrap">
+    <span class="label">Your rights and how AI is used</span>
+    <h2 id="rights-h">You stay in control of your data</h2>
+    <div class="grid g2" style="margin-top:18px">
+      <div class="card cream">
+        <h3>Data from other administrations</h3>
+        <p>The service pulls your data from other administrations under <strong>Ley 39/2015, art. 28</strong>.</p>
+        <p><strong>You can object.</strong></p>
+      </div>
+      <div class="card pink">
+        <h3>Automation approves clear-cut cases only</h3>
+        <p>Officers then spot-check a <strong>random sample</strong> of those approvals.</p>
+      </div>
+      <div class="card sky">
+        <h3>If a check finds a problem</h3>
+        <p>You are told and you can respond.</p>
+      </div>
+      <div class="card dark">
+        <h3>Nothing is revoked silently</h3>
+        <p>You always hear about it first.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <svg width="40" height="40" viewBox="0 0 40 40" aria-hidden="true" style="flex:none"><rect x="3" y="7" width="34" height="26" rx="7" fill="#fdecef"/><rect x="3" y="7" width="34" height="8" rx="4" fill="#ff6b7f"/><circle cx="15" cy="22" r="2" fill="#121212"/><circle cx="25" cy="22" r="2" fill="#121212"/><path d="M16 27q4 3 8 0" stroke="#121212" stroke-width="2" fill="none" stroke-linecap="round"/></svg>
+    <p style="margin:0"><strong>Student prototype</strong> &ndash; proposed service design, not an official government service. Figures: Ministerio de Inclusión (Jan 2025); RD 1155/2024.<br><span style="color:#bdbdbd">IE University, Connected Industries, AI-Ready Public Services group project.</span></p>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var items=document.querySelectorAll('#tracker li');
+  var btn=document.getElementById('trackBtn');
+  if(!btn||!items.length)return;
+  btn.addEventListener('click',function(){
+    var now=-1;
+    for(var i=0;i<items.length;i++){if(items[i].classList.contains('now'))now=i;}
+    if(now===-1){
+      for(var j=0;j<items.length;j++){items[j].className='';}
+      items[0].className='done';items[1].className='now';
+      btn.textContent='See the next update';return;
+    }
+    items[now].className='done';
+    if(now+1<items.length){items[now+1].className='now';}
+    if(now===items.length-1){btn.textContent='Start again';}
+  });
+})();
+</script>
+</body>
+</html>
