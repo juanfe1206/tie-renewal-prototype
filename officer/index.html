@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Officer console · Residence Renewal</title>
+<meta name="description" content="Student prototype: officer console of a redesigned residence permit and TIE renewal service for Madrid. Synthetic data only.">
+<link rel="stylesheet" href="../design-system/tokens.css">
+<link rel="stylesheet" href="../design-system/components.css">
+<link rel="stylesheet" href="officer.css">
+</head>
+<body class="has-demobar">
+<div id="app"></div>
+<dialog id="dlg" class="o-dialog" aria-labelledby="dlg-title">
+  <form method="dialog" id="dlg-form">
+    <h2 id="dlg-title" class="t-h3"></h2>
+    <div id="dlg-body"></div>
+    <div id="dlg-fields"></div>
+    <p class="c-error-msg" id="dlg-err" role="alert"></p>
+    <div class="c-button-group">
+      <button type="submit" class="c-button" id="dlg-ok">Confirm</button>
+      <button type="button" class="c-button c-button--secondary" id="dlg-cancel">Cancel</button>
+    </div>
+  </form>
+</dialog>
+<noscript><p style="padding:16px">This prototype needs JavaScript.</p></noscript>
+<script src="../js/i18n.js"></script>
+<script src="../js/data.js"></script>
+<script src="officer-data.js"></script>
+<script src="officer.js"></script>
+</body>
+</html>
