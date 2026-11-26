@@ -111,7 +111,12 @@
   var PERSONA = {
     amina: { language: "Arabic", identity: "Cl@ve" },
     robert: { language: "English", identity: "certificate" },
-    lucia: { language: "Spanish", identity: "Cl@ve" }
+    lucia: { language: "Spanish", identity: "Cl@ve",
+      /* What the AI document check read from the contract Lucía attaches to her answer (synthetic). */
+      docRead: { expect: "contract", type: "Employment contract",
+        fields: [["Employer", "Servicios Logísticos Oca S.L."], ["Start date", "1 June 2026"], ["Contract type", "Permanent, full time"]],
+        tamper: "No edits after signing. Fonts, layout and file metadata are consistent.",
+        match: "New employer registration found, effective 1 June 2026 (filed 14 September). It matches the contract start date and explains the June to August gap." } }
   };
 
   var LANGS = ["Spanish", "Spanish", "Spanish", "English", "English", "Arabic", "French", "Portuguese", "Chinese", "Romanian", "Ukrainian", "Urdu"];
@@ -132,7 +137,8 @@
       expiry: s.expiry != null ? s.expiry : c.expiry,
       extraChecks: s.extraChecks || [],
       aiSummary: s.aiSummary || null,
-      signal: s.signal || null
+      signal: s.signal || null,
+      docRead: p.docRead || null
     };
   }
 

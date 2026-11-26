@@ -14,7 +14,7 @@
   "use strict";
   var MAX = 10 * 1024 * 1024, MIN = 15 * 1024, MIN_SIDE = 900;
   var KINDS = {
-    contract: { label: "an employment contract or employer letter", words: ["contract", "contrato", "employment", "empleo", "employer", "empresa", "nomina", "nómina", "payslip", "alta", "vida laboral"] },
+    contract: { label: "an employment contract or employer letter", short: "Looks like an employment contract", words: ["contract", "contrato", "employment", "empleo", "employer", "empresa", "nomina", "nómina", "payslip", "alta", "vida laboral"] },
     passport: { label: "a passport photo page", words: ["passport", "pasaporte", "id", "photo", "foto"] },
     any:      { label: "a supporting document", words: [] }
   };
@@ -44,12 +44,19 @@
     });
   }
 
+  /* Simulated "is this the document we asked for": matches the file name.
+     Shared with the officer console (AI document check panel). */
+  function looksLike(name, expect) {
+    var want = KINDS[expect] || KINDS.any, n = String(name || "").toLowerCase();
+    return want.words.some(function (w) { return n.indexOf(w) >= 0; });
+  }
+
   function check(file, expect) {
     var want = KINDS[expect] || KINDS.any;
-    var items = [], status = "ok";
-    function add(level, text) { items.push({ level: level, text: text }); if (level === "error") status = "error"; else if (level === "warn" && status !== "error") status = "warn"; }
+    var items = [], status = "ok", tags = [];
+    function add(level, text, tag) { if (tag && level === "ok") tags.push(tag); items.push({ level: level, text: text }); if (level === "error") status = "error"; else if (level === "warn" && status !== "error") status = "warn"; }
     var kind = kindOf(file);
-    if (!kind) { add("error", "This file type can't be used. Send a PDF, JPG or PNG."); return Promise.resolve({ status: status, items: items, name: file.name }); }
+    if (!kind) { add("error", "This file type can't be used. Send a PDF, JPG or PNG."); return Promise.resolve({ status: status, items: items, tags: tags, name: file.name }); }
     add("ok", "File type accepted (" + (kind === "pdf" ? "PDF" : "image") + ")");
     if (file.size > MAX) add("error", "The file is larger than 10 MB. Send a smaller scan or photo.");
     else if (file.size < MIN) add("warn", "The file is very small. It may be hard to read.");
@@ -59,32 +66,34 @@
       ? readHead(file, 1024 * 1024).then(function (head) {
           if (head.slice(0, 5) !== "%PDF-") add("error", "This doesn't open as a PDF. Export it again or send a photo.");
           else if (head.indexOf("/Encrypt") >= 0) add("error", "The PDF is password-protected. Remove the password and send it again.");
-          else add("ok", "The PDF opens and is not password-protected");
+          else { add("ok", "The PDF opens and is not password-protected", "Readable"); tags.push("Not password-protected"); }
         })
       : imageSize(file).then(function (s) {
           if (!s) add("warn", "We couldn't open this image here. An officer will check it.");
           else if (Math.min(s.w, s.h) < MIN_SIDE) add("warn", "The photo is low resolution (" + s.w + "×" + s.h + "). Text may be blurry. Take it closer if you can.");
-          else add("ok", "The photo is sharp enough to read (" + s.w + "×" + s.h + ")");
+          else add("ok", "The photo is sharp enough to read (" + s.w + "×" + s.h + ")", "Readable");
         });
 
     return p.then(function () {
       if (status !== "error" && want.words.length) {
-        var n = file.name.toLowerCase();
-        var hit = want.words.some(function (w) { return n.indexOf(w) >= 0; });
-        if (hit) add("ok", "Looks like " + want.label + " (simulated reading)");
+        var hit = looksLike(file.name, expect);
+        if (hit) { add("ok", "Looks like " + want.label + " (simulated reading)"); if (want.short) tags.splice(tags.length ? 1 : 0, 0, want.short); }
         else add("warn", "We couldn't confirm this is " + want.label + ". You can still send it: an officer will look at it (simulated reading).");
       }
-      return { status: status, items: items, name: file.name };
+      return { status: status, items: items, tags: tags, name: file.name };
     });
   }
 
   function render(result) {
     if (!result) return "";
     var head = result.status === "error" ? ["error", "This file can't be sent yet"] : result.status === "warn" ? ["warning", "You can send it, but check this"] : ["success", "Ready to send"];
-    return '<div class="c-banner c-banner--' + head[0] + '" style="margin:var(--space-3) 0 var(--space-4)"><p class="c-banner__title">Document check</p><div class="c-banner__body"><p class="c-banner__heading">' + head[1] + '</p><ul class="c-list" style="margin:0">' +
+    var tags = result.status !== "error" && result.tags && result.tags.length
+      ? '<p class="c-doccheck__tags" style="margin:0 0 var(--space-3)">' + result.tags.map(function (x) { return '<span class="c-tag c-tag--success">' + x.replace(/</g, "&lt;") + "</span>"; }).join(" · ") + "</p>" : "";
+    return '<div class="c-banner c-banner--' + head[0] + ' c-doccheck" style="margin:var(--space-3) 0 var(--space-4)"><p class="c-banner__title">AI document check</p><div class="c-banner__body"><p class="c-banner__heading">' + head[1] + "</p>" + tags +
+      '<details class="c-details" style="margin:0"' + (result.status === "ok" ? "" : " open") + '><summary>What we checked</summary><div class="c-details__body"><ul class="c-list" style="margin:0">' +
       result.items.map(function (it) { return '<li><strong>' + (it.level === "ok" ? "OK" : it.level === "warn" ? "Check" : "Problem") + ":</strong> " + it.text.replace(/</g, "&lt;") + "</li>"; }).join("") +
-      '</ul><p class="t-small t-secondary" style="margin:var(--space-2) 0 0">This check only helps you avoid problems. It doesn\'t decide your application.</p></div></div>';
+      '</ul></div></details><p style="margin:var(--space-3) 0 0"><strong>A person still decides.</strong> <span class="t-small t-secondary">This check only helps you avoid problems. It doesn\'t decide your application.</span></p></div></div>';
   }
 
-  window.DocCheck = { check: check, render: render, KINDS: KINDS };
+  window.DocCheck = { check: check, render: render, looksLike: looksLike, KINDS: KINDS };
 })();

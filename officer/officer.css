@@ -122,3 +122,8 @@
 }
 .o-ladder .c-tag, .c-flag__head .c-tag, .o-signal__head .c-tag { align-self: start; }
 .c-banner__title { max-width: none; }
+/* AI document check panel (case view) */
+.o-aidoc__fields { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 2px var(--space-3); margin: 0; }
+.o-aidoc__fields dt { color: var(--color-text-secondary); }
+.o-aidoc__fields dd { margin: 0; font-weight: var(--weight-semibold); }
+.o-aidoc .o-ladder p { margin: 0; }

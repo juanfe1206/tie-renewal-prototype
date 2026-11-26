@@ -237,6 +237,22 @@
       (btns ? '<div class="c-button-group">' + btns + "</div>" : "") + "</article>";
   }
 
+  /* AI document check on files the applicant attached to a flag answer.
+     The AI reads and checks; the officer decides. Values come from OD.meta (docRead). */
+  function aiDocPanel(c) {
+    var dr = M(c).docRead, f = c.flags.filter(function (x) { return x.responseFile; })[0];
+    if (!dr || !f) return "";
+    var ok = window.DocCheck ? window.DocCheck.looksLike(f.responseFile, dr.expect) : true;
+    function row(step, src, body, good, tag) { return '<li><span class="o-rung">' + esc(step) + "<small>" + esc(src) + "</small></span><div>" + body + '</div><span class="c-tag c-tag--' + (good ? "success" : "warning") + '">' + esc(tag) + "</span></li>"; }
+    return '<section class="c-card o-aidoc" id="aidoc" aria-labelledby="aid-h"><h2 id="aid-h">AI document check</h2>' +
+      '<p class="t-small t-secondary">Attached to the answer on ' + fmt(f.responseDay) + ': <strong class="t-mono">' + esc(f.responseFile) + "</strong> (rung 4, upload).</p><ul class=\"o-ladder\">" +
+      row("Document type", "AI document reading", "<strong>" + esc(ok ? dr.type : "Not recognised") + "</strong><p>" + (ok ? "Matches what was asked for." : "The AI isn't sure this is the document asked for. Open the file.") + "</p>", ok, ok ? "recognised" : "check") +
+      row("Fields extracted", "AI document reading, page 1", ok ? '<dl class="o-aidoc__fields">' + dr.fields.map(function (x) { return "<dt>" + esc(x[0]) + "</dt><dd>" + esc(x[1]) + "</dd>"; }).join("") + "</dl>" : "<p>Not extracted.</p>", ok, ok ? "extracted" : "check") +
+      row("Tamper check", "File structure (rule R7)", "<p>" + esc(dr.tamper) + "</p>", true, "passed") +
+      row("Source match", "Social Security (PID query)", "<p>" + esc(ok ? dr.match : "Not matched: fields not read.") + "</p>", ok, ok ? "matches" : "check") +
+      '</ul><div class="c-inset" style="margin-top:var(--space-3)"><p><strong>The AI never decides.</strong> It reads and checks the file, and it never takes instructions from a document. You decide the flag.</p></div></section>';
+  }
+
   function actions(c) {
     if (!isOpen(c)) return "";
     var st = c.flags.map(flagState);
@@ -284,6 +300,7 @@
         (c.fix && !c.fix.done ? '<button class="c-button c-button--secondary" data-act="simfix" data-id="' + c.id + '">Applicant completes the fix</button>' : "") +
         awaiting.map(function (f) { return '<button class="c-button c-button--secondary" data-act="simreply" data-id="' + c.id + '" data-f="' + f.id + '">Applicant answers the flag</button>'; }).join("") + "</div></section>" : "") +
       (c.flags.length ? '<section class="c-card" aria-labelledby="fl-h"><h2 id="fl-h">Flag cards</h2><p class="t-small t-secondary">One card per possible problem. You decide each one with a reason. No risk score, no suggested outcome.</p>' + c.flags.map(function (f) { return flagCard(c, f); }).join("") + "</section>" : "") +
+      aiDocPanel(c) +
       '<section class="c-card" id="ladder" aria-labelledby="lad-h"><h2 id="lad-h">Evidence ladder</h2><p class="t-small t-secondary">Source first, upload last: 1 PID query, 2 Spanish e-document checked by CSV or e-seal, 3 passport chip (optional fast lane), 4 upload.</p><ul class="o-ladder">' +
       ks.map(function (k) { return '<li><span class="o-rung">Rung ' + RUNG[k.source][0] + "<small>" + esc(RUNG[k.source][1]) + "</small></span><div><strong>" + esc(k.name) + "</strong><p>" + esc(k.detail) + '</p></div><span class="c-tag c-tag--' + (k.result === "green" ? "success" : k.result === "tamper-suspected" || k.result === "red" ? "error" : "warning") + '">' + esc(k.result) + "</span></li>"; }).join("") + "</ul></section>" +
       '<section class="c-card" aria-labelledby="rf-h"><h2 id="rf-h">Rules fired</h2><table class="c-table"><caption class="u-visually-hidden">Rules fired</caption><tbody>' + rulesFired(c).map(function (r) { return '<tr><td><span class="c-tag c-tag--' + (r.ok ? "success" : "warning") + '">' + (r.ok ? "pass" : "stop") + '</span></td><td class="t-mono">' + r.id + "</td><td>" + esc(ruleName(r.id)) + '<br><small class="t-secondary">' + esc(r.note) + "</small></td></tr>"; }).join("") + '</tbody></table><p class="t-small t-secondary">Rules engine v1.3 under Ley 40/2015 art. 41. <a href="#rules">Read every rule and its legal basis</a>.</p></section>' +
@@ -492,7 +509,7 @@
     if (act === "simfix") { toast("Applicant completed the fix"); R.payFix(c.id); return; }
     if (act === "simreply") {
       r = await ask({ title: "Simulate the applicant's answer", fields: [{ id: "reason", label: "Applicant's answer", type: "textarea", value: c.id === "lucia" ? "My employer changed in June. The new company registered me in September; here is the contract." : "Here is my explanation and a supporting document." }], ok: "Send answer" });
-      if (!r) return; toast("Answer received"); R.respondFlag(c.id, fid, r.reason, "supporting-document.pdf"); return;
+      if (!r) return; toast("Answer received"); R.respondFlag(c.id, fid, r.reason, c.id === "lucia" ? "Lucia-employment-contract.pdf" : "supporting-document.pdf"); return;
     }
     if (act === "object") {
       var q = b.getAttribute("data-q");
