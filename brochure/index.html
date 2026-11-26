@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Residence Renewal Brochure</title>
+<link rel="stylesheet" href="../design-system/tokens.css">
+<style>
+/* Tri-fold, A4 landscape, printed both sides. Each sheet = 3 panels of 99mm.
+   Outside sheet (left→right): inside flap · back · front cover
+   Inside sheet  (left→right): what's changing · how it works · if something needs attention */
+@page { size: A4 landscape; margin: 0; }
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { font-family: var(--font-sans); color: var(--color-text); background: #d9dee5; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+.sheet { width: 297mm; height: 210mm; margin: 12mm auto; background: #fff; display: grid; grid-template-columns: repeat(3, 99mm); box-shadow: 0 6px 24px rgba(12,22,34,.25); position: relative; overflow: hidden; }
+.sheet-label { width: 297mm; margin: 10mm auto -8mm; font-size: 11pt; font-weight: 700; color: var(--color-text-secondary); }
+.panel { position: relative; padding: 10mm 8.5mm 9mm; display: flex; flex-direction: column; gap: 3.6mm; font-size: 9.3pt; line-height: 1.42; overflow: hidden; }
+.panel + .panel::before { content: ""; position: absolute; left: 0; top: 6mm; bottom: 6mm; border-left: 1px dashed #c9d0d9; }
+@media print { body { background: #fff; } .sheet { margin: 0; box-shadow: none; page-break-after: always; } .sheet-label { display: none; } .panel + .panel::before { display: none; } }
+@media screen and (max-width: 1150px) { .sheet, .sheet-label { zoom: .5; } }
+
+/* Type */
+.eyebrow { font-size: 7pt; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: var(--color-link); margin: 0; }
+h2 { font-size: 16pt; line-height: 1.12; font-weight: 800; margin: 0; letter-spacing: -.01em; }
+h3 { font-size: 10.2pt; font-weight: 800; margin: 0 0 .6mm; }
+p { margin: 0; }
+.small { font-size: 7.9pt; color: var(--color-text-secondary); }
+.mono { font-family: var(--font-mono); }
+strong { font-weight: 800; }
+
+/* Shared bits */
+.brandbar { display: flex; align-items: center; gap: 2.5mm; color: #fff; font-weight: 700; font-size: 8.4pt; line-height: 1.15; }
+.brandbar small { display: block; font-weight: 400; font-size: 6.8pt; opacity: .85; }
+.brandbar svg { width: 9mm; height: 9mm; flex: none; }
+.proto { font-size: 6.4pt; font-weight: 700; letter-spacing: .04em; color: #fff; background: var(--color-proto); padding: 1mm 2mm; border-radius: 1mm; align-self: flex-start; }
+.ico { width: 7.5mm; height: 7.5mm; flex: none; }
+.row { display: flex; gap: 2.8mm; align-items: flex-start; }
+.box { border: 1px solid var(--color-border); border-radius: 1.5mm; padding: 2.6mm 3mm; }
+.box--alt { background: var(--color-surface-alt); border-color: transparent; }
+.box--warn { border-left: 1.4mm solid var(--color-warning-edge); }
+.box--ok { border-left: 1.4mm solid var(--color-success); }
+.box--info { border-left: 1.4mm solid var(--color-link); }
+.tag { display: inline-block; font-size: 6.6pt; font-weight: 800; padding: .3mm 1.6mm; border-radius: .8mm; background: var(--color-brand-tint); color: var(--color-brand); }
+.tag--ok { background: var(--color-success-tint); color: var(--color-success); }
+.tag--warn { background: var(--color-warning-tint); color: var(--color-warning); }
+.tag--err { background: var(--color-error-tint); color: var(--color-error); }
+ul.ticks { list-style: none; padding: 0; margin: 0; display: grid; gap: 1.6mm; }
+ul.ticks li { padding-left: 5mm; position: relative; }
+ul.ticks li::before { content: ""; position: absolute; left: .4mm; top: 1.1mm; width: 2.4mm; height: 1.3mm; border-left: .6mm solid var(--color-success); border-bottom: .6mm solid var(--color-success); transform: rotate(-45deg); }
+.spacer { flex: 1; }
+
+/* ---------- Front cover ---------- */
+.cover { background: var(--color-brand); color: #fff; padding: 0; gap: 0; }
+.cover__top { padding: 9mm 8.5mm 0; display: flex; flex-direction: column; gap: 6mm; }
+.cover h1 { font-size: 25pt; line-height: 1.04; font-weight: 800; margin: 0; letter-spacing: -.02em; }
+.cover h1 em { font-style: normal; color: #9fe0b6; }
+.cover .lead { font-size: 10pt; line-height: 1.35; color: #dbe6f2; }
+.promises { display: grid; gap: 2mm; }
+.promise { display: flex; align-items: center; gap: 3mm; background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.18); border-radius: 1.5mm; padding: 2mm 3mm; font-size: 9pt; font-weight: 700; }
+.promise b { font-size: 15pt; font-weight: 800; min-width: 9mm; color: #9fe0b6; }
+.cover__art { margin-top: auto; position: relative; height: 62mm; }
+.cover__art svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.cover__foot { background: var(--color-brand-strong); padding: 3mm 8.5mm; display: flex; justify-content: space-between; align-items: center; font-size: 6.6pt; color: #c5d2e0; border-top: 1.6mm solid var(--color-link); }
+
+/* ---------- Before / after ---------- */
+.ba { display: grid; gap: 1.6mm; }
+.ba__row { display: grid; grid-template-columns: 1fr 4mm 1fr; align-items: stretch; gap: 1mm; }
+.ba__old, .ba__new { padding: 1.6mm 2.2mm; border-radius: 1.2mm; font-size: 8.3pt; line-height: 1.3; }
+.ba__old { background: var(--color-surface-alt); color: var(--color-text-secondary); }
+.ba__old s { text-decoration-color: var(--color-error); text-decoration-thickness: .35mm; }
+.ba__new { background: var(--color-success-tint); color: var(--color-text); font-weight: 600; }
+.ba__arrow { display: grid; place-items: center; color: var(--color-success); font-weight: 800; font-size: 9pt; }
+.ba__head { display: grid; grid-template-columns: 1fr 4mm 1fr; gap: 1mm; font-size: 6.6pt; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; }
+.ba__head span:first-child { color: var(--color-text-secondary); }
+.ba__head span:last-child { color: var(--color-success); }
+.stats { display: grid; grid-template-columns: 1fr 1fr; gap: 2mm; }
+.stat { border-radius: 1.5mm; padding: 2.4mm 2.6mm; }
+.stat b { display: block; font-size: 17pt; font-weight: 800; line-height: 1; letter-spacing: -.02em; }
+.stat span { font-size: 7pt; line-height: 1.25; display: block; margin-top: 1mm; }
+.stat--old { background: var(--color-surface-alt); }
+.stat--old b { color: var(--color-text-secondary); }
+.stat--new { background: var(--color-brand); color: #fff; }
+.stat--new b { color: #9fe0b6; }
+
+/* ---------- Timeline ---------- */
+.steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
+.step { display: grid; grid-template-columns: 8mm 1fr; gap: 2.5mm; position: relative; padding-bottom: 3.2mm; }
+.step:not(:last-child)::before { content: ""; position: absolute; left: 3.7mm; top: 8mm; bottom: 0; width: .6mm; background: var(--color-border); }
+.step__n { width: 8mm; height: 8mm; border-radius: 50%; background: var(--color-brand); color: #fff; display: grid; place-items: center; font-weight: 800; font-size: 9pt; position: relative; z-index: 1; }
+.step:last-child .step__n { background: var(--color-success); }
+.step__when { font-size: 6.8pt; font-weight: 800; color: var(--color-link); letter-spacing: .04em; text-transform: uppercase; }
+
+/* ---------- Phone mock ---------- */
+.phone { width: 41mm; border: 1.8mm solid #1b232d; border-radius: 6mm; background: #fff; padding: 3mm 2.4mm 3.4mm; align-self: center; box-shadow: 0 2mm 5mm rgba(12,22,34,.18); }
+.phone__notch { width: 11mm; height: 1mm; background: #1b232d; border-radius: 1mm; margin: -1.4mm auto 2mm; }
+.phone__bar { background: var(--color-brand); color: #fff; font-size: 5.6pt; font-weight: 700; padding: 1mm 1.6mm; border-radius: .8mm; margin-bottom: 1.6mm; }
+.phone__h { font-size: 7.4pt; font-weight: 800; margin-bottom: 1mm; }
+.phone__clock { border: 1px solid var(--color-border); border-radius: 1mm; padding: 1.2mm 1.4mm; font-size: 5.6pt; margin: 1.2mm 0; }
+.phone__clock b { font-size: 8pt; }
+.phone__meter { height: 1.4mm; border-radius: 1mm; background: var(--color-surface-alt); margin-top: .8mm; overflow: hidden; }
+.phone__meter i { display: block; height: 100%; width: 22%; background: var(--color-warning-edge); background-image: repeating-linear-gradient(45deg, transparent 0 1mm, rgba(255,255,255,.45) 1mm 2mm); }
+.phone__banner { border: .5mm solid var(--color-warning-edge); border-radius: .8mm; font-size: 5.6pt; }
+.phone__banner p:first-child { background: var(--color-warning-edge); font-weight: 800; padding: .4mm 1.2mm; }
+.phone__banner p:last-child { padding: .8mm 1.2mm; }
+.phone__btn { margin-top: 1.4mm; background: var(--color-action); color: #fff; font-size: 6pt; font-weight: 700; text-align: center; padding: 1mm; border-radius: .6mm; }
+
+/* ---------- Help panel ---------- */
+.contact { display: grid; gap: 2.4mm; }
+.langs { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.4mm; }
+.langs span { border: 1px solid var(--color-border); border-radius: 1mm; text-align: center; padding: 1.4mm .5mm; font-weight: 800; font-size: 8.4pt; }
+.langs small { display: block; font-weight: 400; font-size: 5.8pt; color: var(--color-text-secondary); }
+.back-foot { font-size: 6.2pt; color: var(--color-text-secondary); border-top: 1px solid var(--color-border); padding-top: 2mm; }
+
+/* ---------- Rights panel ---------- */
+.rights-hero { background: var(--color-brand-tint); border-radius: 1.5mm; padding: 3mm; display: grid; grid-template-columns: 1fr 1fr; gap: 2mm; text-align: center; }
+.rights-hero div { display: flex; flex-direction: column; align-items: center; gap: 1mm; font-size: 8pt; font-weight: 800; line-height: 1.2; }
+.rights-hero svg { width: 10mm; height: 10mm; }
+.deadlines { width: 100%; border-collapse: collapse; font-size: 8pt; }
+.deadlines td { padding: 1.1mm 0; border-bottom: 1px solid var(--color-border); vertical-align: top; }
+.deadlines td:last-child { text-align: right; font-weight: 800; white-space: nowrap; padding-left: 2mm; }
+</style>
+</head>
+<body>
+
+<!-- ======================= OUTSIDE ======================= -->
+<p class="sheet-label">Outside (print side 1): inside flap · back · front cover</p>
+<section class="sheet" aria-label="Outside of the brochure">
+
+  <!-- Inside flap: your rights -->
+  <div class="panel">
+    <p class="eyebrow">Your rights</p>
+    <h2>A computer can say yes. Only a person can say no.</h2>
+    <div class="rights-hero">
+      <div><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="5" y="9" width="30" height="22" rx="3" fill="none" stroke="#1a6b3c" stroke-width="2.6"/><path d="M13 20l5 5 9-10" fill="none" stroke="#1a6b3c" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>Automatic check<br><span class="tag tag--ok">can approve</span></div>
+      <div><svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="14" r="6.5" fill="none" stroke="#0b2e4f" stroke-width="2.6"/><path d="M8 34c1.5-8 6.5-12 12-12s10.5 4 12 12" fill="none" stroke="#0b2e4f" stroke-width="2.6" stroke-linecap="round"/></svg>An officer<br><span class="tag">decides refusals</span></div>
+    </div>
+    <ul class="ticks">
+      <li><strong>Nationality is never used.</strong> The system gives no risk scores.</li>
+      <li><strong>You see every problem we find</strong>, with its evidence, and you can answer before any decision.</li>
+      <li><strong>We get your data from other public offices</strong> (Ley 39/2015, art. 28). You can object and upload documents yourself instead.</li>
+      <li><strong>Officers spot-check automatic approvals.</strong> If they find something, we tell you first. Nothing is cancelled silently.</li>
+      <li><strong>If we don't decide within 90 days</strong>, the law treats your renewal as granted.</li>
+    </ul>
+    <div class="spacer"></div>
+    <div class="box box--alt">
+      <h3>Your deadlines and ours</h3>
+      <table class="deadlines">
+        <tr><td>Apply</td><td>from 2 months before expiry</td></tr>
+        <tr><td>Fix something missing</td><td>10 days</td></tr>
+        <tr><td>Answer an officer</td><td>10 to 15 days</td></tr>
+        <tr><td>Ask for a review</td><td>1 month</td></tr>
+        <tr><td>Go to court</td><td>2 months</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- Back panel: help and contact -->
+  <div class="panel">
+    <p class="eyebrow">Help for everyone</p>
+    <h2>Can't do it online? A person will help you.</h2>
+    <p>The assisted service is the same application, with the same rules and the same speed. You can bring someone you trust.</p>
+    <div class="contact">
+      <div class="box box--info row">
+        <svg class="ico" viewBox="0 0 30 30" aria-hidden="true"><path d="M9 4h4l2 6-3 2a14 14 0 0 0 6 6l2-3 6 2v4a3 3 0 0 1-3 3C14 24 6 16 6 7a3 3 0 0 1 3-3z" fill="none" stroke="#1d58a6" stroke-width="2.2" stroke-linejoin="round"/></svg>
+        <div><h3>By phone</h3><p class="mono" style="font-size:10pt;font-weight:600">900 000 000</p><p class="small">Demo number · Mon–Fri, 9:00–18:00</p></div>
+      </div>
+      <div class="box box--info row">
+        <svg class="ico" viewBox="0 0 30 30" aria-hidden="true"><path d="M15 27s-8-8.3-8-14a8 8 0 0 1 16 0c0 5.7-8 14-8 14z" fill="none" stroke="#1d58a6" stroke-width="2.2"/><circle cx="15" cy="13" r="3" fill="#1d58a6"/></svg>
+        <div><h3>In person</h3><p>Madrid immigration office (demo)<br>C/ García de Paredes 65, 28010 Madrid</p><p class="small">Mon–Fri, 9:00–14:00 · ask for an assisted appointment</p></div>
+      </div>
+      <div class="box box--info row">
+        <svg class="ico" viewBox="0 0 30 30" aria-hidden="true"><rect x="4" y="6" width="22" height="16" rx="2.5" fill="none" stroke="#1d58a6" stroke-width="2.2"/><path d="M10 26h10M15 22v4" stroke="#1d58a6" stroke-width="2.2" stroke-linecap="round"/><path d="M9 13h12M9 17h7" stroke="#1d58a6" stroke-width="2" stroke-linecap="round"/></svg>
+        <div><h3>Assisted mode online</h3><p>Bigger text, simpler steps, and help shown first. Works with screen readers.</p></div>
+      </div>
+    </div>
+    <h3 style="margin-top:1mm">Help in your language</h3>
+    <div class="langs">
+      <span lang="es">Hola<small>Español</small></span><span lang="en">Hello<small>English</small></span><span lang="fr">Bonjour<small>Français</small></span><span lang="ar" dir="rtl">مرحبا<small>العربية</small></span>
+    </div>
+    <div class="spacer"></div>
+    <div class="back-foot">
+      <p><strong>Student prototype.</strong> Proposed service design, not an official government service. Phone numbers, addresses and people in this leaflet are fictional.</p>
+      <p style="margin-top:1mm">Sources: RD 1155/2024 (Reglamento de Extranjería); Ley 39/2015; Ministerio de Inclusión data, January 2025. IE University, Connected Industries.</p>
+    </div>
+  </div>
+
+  <!-- Front cover -->
+  <div class="panel cover">
+    <div class="cover__top">
+      <div class="brandbar">
+        <svg viewBox="0 0 36 36" aria-hidden="true"><rect x="3" y="7" width="30" height="22" rx="3" fill="none" stroke="#fff" stroke-width="2.5"/><circle cx="12" cy="18" r="4" fill="#fff"/><path d="M19 15h9M19 20h7" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg>
+        <span>Residence Renewal Service<small>Madrid · Residence permit and TIE</small></span>
+      </div>
+      <h1>Renew your residence and TIE in <em>days</em>, not months</h1>
+      <p class="lead">A new online service for non-EU residents in Madrid. Your form comes pre-filled, you follow every step, and your fingerprint appointment is booked for you.</p>
+      <div class="promises">
+        <div class="promise"><b>1</b>online request, pre-filled</div>
+        <div class="promise"><b>1</b>visit to the police</div>
+        <div class="promise"><b>5</b>working days for most decisions</div>
+      </div>
+    </div>
+    <div class="cover__art" aria-hidden="true">
+      <svg viewBox="0 0 330 210" preserveAspectRatio="xMidYMax meet">
+        <circle cx="250" cy="70" r="58" fill="#12406b"/>
+        <circle cx="70" cy="150" r="80" fill="#0f3a62"/>
+        <g transform="translate(150 40) rotate(-8)">
+          <rect width="150" height="96" rx="10" fill="#fff"/>
+          <rect width="150" height="24" rx="10" fill="#1d58a6"/><rect y="14" width="150" height="10" fill="#1d58a6"/>
+          <text x="12" y="17" font-family="Public Sans, Arial" font-weight="800" font-size="11" fill="#fff">TIE</text>
+          <rect x="12" y="36" width="34" height="42" rx="4" fill="#e8eef5"/><circle cx="29" cy="51" r="8" fill="#b4bdc8"/><path d="M17 74c2-9 7-12 12-12s10 3 12 12" fill="#b4bdc8"/>
+          <rect x="56" y="38" width="76" height="7" rx="3" fill="#e8eef5"/><rect x="56" y="52" width="60" height="7" rx="3" fill="#e8eef5"/><rect x="56" y="66" width="44" height="7" rx="3" fill="#e8eef5"/>
+        </g>
+        <g transform="translate(262 104)"><circle r="26" fill="#1a6b3c"/><path d="M-12 1l8 8 16-17" fill="none" stroke="#fff" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/></g>
+        <g transform="translate(40 92)">
+          <rect width="96" height="84" rx="8" fill="#fff"/>
+          <rect width="96" height="20" rx="8" fill="#9fe0b6"/><rect y="12" width="96" height="8" fill="#9fe0b6"/>
+          <circle cx="24" cy="2" r="5" fill="#0b2e4f"/><circle cx="72" cy="2" r="5" fill="#0b2e4f"/>
+          <g fill="#e8eef5"><rect x="10" y="30" width="14" height="12" rx="2"/><rect x="30" y="30" width="14" height="12" rx="2"/><rect x="50" y="30" width="14" height="12" rx="2"/><rect x="70" y="30" width="14" height="12" rx="2"/><rect x="10" y="48" width="14" height="12" rx="2"/><rect x="30" y="48" width="14" height="12" rx="2"/><rect x="70" y="48" width="14" height="12" rx="2"/><rect x="10" y="66" width="14" height="12" rx="2"/><rect x="30" y="66" width="14" height="12" rx="2"/><rect x="50" y="66" width="14" height="12" rx="2"/></g>
+          <rect x="50" y="48" width="14" height="12" rx="2" fill="#1a6b3c"/><path d="M53 54l3 3 5-6" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </g>
+      </svg>
+    </div>
+    <div class="cover__foot"><span class="proto">PROTOTYPE</span><span>Student project · not an official service</span></div>
+  </div>
+</section>
+
+<!-- ======================= INSIDE ======================= -->
+<p class="sheet-label">Inside (print side 2): what's changing · how it works · if something needs attention</p>
+<section class="sheet" aria-label="Inside of the brochure">
+
+  <!-- What's changing -->
+  <div class="panel">
+    <p class="eyebrow">What's changing</p>
+    <h2>Six steps, each one made easier</h2>
+    <p>People call this "renewing the NIE". Your NIE number never expires: you renew your <strong>residence permit</strong> and then your <strong>TIE card</strong>.</p>
+    <div class="ba__head"><span>Until now</span><span></span><span>New service</span></div>
+    <div class="ba">
+      <div class="ba__row"><div class="ba__old"><s>You track the deadline yourself</s></div><div class="ba__arrow">›</div><div class="ba__new">We remind you 90 days before</div></div>
+      <div class="ba__row"><div class="ba__old"><s>You send papers offices already have</s></div><div class="ba__arrow">›</div><div class="ba__new">Your form comes pre-filled</div></div>
+      <div class="ba__row"><div class="ba__old"><s>You wait without knowing the status</s></div><div class="ba__arrow">›</div><div class="ba__new">Live status, every update sent to you</div></div>
+      <div class="ba__row"><div class="ba__old"><s>You hunt for a "cita de huellas"</s></div><div class="ba__arrow">›</div><div class="ba__new">Appointment booked for you</div></div>
+      <div class="ba__row"><div class="ba__old"><s>A visit to give fingerprints</s></div><div class="ba__arrow">›</div><div class="ba__new">One visit, nothing to print</div></div>
+      <div class="ba__row"><div class="ba__old"><s>A second trip to collect the card</s></div><div class="ba__arrow">›</div><div class="ba__new">Card ready in 15 days<br><span class="tag" style="margin-top:.6mm">Proposed: by post</span></div></div>
+    </div>
+    <div class="spacer"></div>
+    <div class="stats">
+      <div class="stat stat--old"><b>88 days</b><span>average wait in Madrid until now. Only 65% decided within 90 days.</span></div>
+      <div class="stat stat--new"><b>5 days</b><span>our target for clear-cut renewals (working days). 30 days if an officer checks.</span></div>
+    </div>
+    <p class="small">"Until now" figures: Ministerio de Inclusión, Madrid, January 2025.</p>
+  </div>
+
+  <!-- How it works -->
+  <div class="panel">
+    <p class="eyebrow">How it works</p>
+    <h2>From reminder to card in five steps</h2>
+    <ol class="steps">
+      <li class="step"><span class="step__n">1</span><div><p class="step__when">90 days before expiry</p><h3>You get a reminder</h3><p>By SMS, email or letter, with your reference number.</p></div></li>
+      <li class="step"><span class="step__n">2</span><div><p class="step__when">From 2 months before · 10 minutes</p><h3>You apply online</h3><p>Sign in with Cl@ve or a digital certificate. Check the details we already have, say if anything changed, and pay the fee online.</p></div></li>
+      <li class="step"><span class="step__n">3</span><div><p class="step__when">5 working days · 30 if an officer checks</p><h3>We check and decide</h3><p>If everything matches, you're approved automatically. If something changed, an officer looks at it.</p></div></li>
+      <li class="step"><span class="step__n">4</span><div><p class="step__when">Within 10 working days of the decision</p><h3>Your appointment arrives</h3><p>We book your fingerprint appointment for you. You can change it once online.</p></div></li>
+      <li class="step"><span class="step__n">5</span><div><p class="step__when">Within 15 days of fingerprints</p><h3>Your TIE card is ready</h3><p>Valid for 4 years.</p></div></li>
+    </ol>
+    <div class="spacer"></div>
+    <div class="box box--alt">
+      <h3>What you need</h3>
+      <ul class="ticks">
+        <li>Cl@ve or a digital certificate, or help from a person</li>
+        <li>A bank card for the fee (Modelo 790, code 012)</li>
+        <li>Nothing to upload in most cases</li>
+      </ul>
+    </div>
+    <p class="small"><strong>While you wait, your current permit stays valid</strong>, even if it expires before we decide.</p>
+  </div>
+
+  <!-- If something needs attention -->
+  <div class="panel">
+    <p class="eyebrow">If something needs attention</p>
+    <h2>You're always told, and you can always answer</h2>
+    <div class="row" style="align-items:center;gap:3mm">
+      <div class="phone" aria-hidden="true">
+        <div class="phone__notch"></div>
+        <div class="phone__bar">Your renewal</div>
+        <p class="phone__h">One thing to fix</p>
+        <div class="phone__banner"><p>Action needed</p><p>The fee you paid is €2.10 short.</p></div>
+        <div class="phone__clock"><b>Day 3</b> of 90 · <strong>Clock paused</strong><div class="phone__meter"><i></i></div></div>
+        <div class="phone__btn">Pay €2.10 now</div>
+      </div>
+      <p class="small" style="flex:1">Example screen. While you fix something, the clock stops, so the days don't count against you.</p>
+    </div>
+    <div class="box box--warn">
+      <h3><span class="tag tag--warn">Something missing</span></h3>
+      <p>We tell you exactly what's wrong and how to fix it, often in one click. You get <strong>10 days</strong>. Your application is never closed automatically.</p>
+    </div>
+    <div class="box box--info">
+      <h3><span class="tag">A question from an officer</span></h3>
+      <p>If something doesn't match, an officer shows you what they found and the evidence. You get <strong>10 to 15 days</strong> to answer, in any language. Nothing is refused before you answer.</p>
+    </div>
+    <div class="box box--ok" style="border-left-color:var(--color-error)">
+      <h3><span class="tag tag--err">If you disagree</span></h3>
+      <p><strong>Ask for a review</strong> (recurso de reposición) within 1 month. A different official decides, and you can do it online. Or <strong>go to court</strong> within 2 months.</p>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>
