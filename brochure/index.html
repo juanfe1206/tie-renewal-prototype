@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Residence Renewal Brochure</title>
+<!-- Project design system: tokens only, no new colours or fonts. -->
+<link rel="stylesheet" href="../design-system/tokens.css">
+<style>
+/* Tri-fold, A4 landscape, printed both sides, 3 panels of 99mm.
+   Outside (left to right): inside flap = how it works, back = help, front cover
+   Inside  (left to right): what changes, if something needs attention, your rights
+   Type floor for print: body 10.5pt, small text 8pt. */
+@page { size: A4 landscape; margin: 0; }
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { font-family: var(--font-sans); color: var(--color-text); background: #dfe3e9; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+.sheet { width: 297mm; height: 210mm; margin: 12mm auto; background: var(--color-surface); display: grid; grid-template-columns: repeat(3, 99mm); box-shadow: 0 6px 24px rgba(12,22,34,.22); overflow: hidden; }
+.sheet-label { width: 297mm; margin: 10mm auto -8mm; font-size: 11pt; font-weight: 700; color: var(--color-text-secondary); }
+@media print { body { background: #fff; } .sheet { margin: 0; box-shadow: none; page-break-after: always; } .sheet-label { display: none; } .panel { border-right: 0 !important; } }
+@media screen and (max-width: 1150px) { .sheet, .sheet-label { zoom: .5; } }
+
+.panel { padding: 10mm 9mm 9mm; display: flex; flex-direction: column; gap: 4.5mm; font-size: 10.5pt; line-height: 1.4; overflow: hidden; border-right: 1px solid var(--color-border); }
+.panel:last-child { border-right: 0; }
+h1, h2, h3, p { margin: 0; }
+.eyebrow { font-size: 8pt; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--color-link); display: flex; align-items: center; gap: 2mm; }
+.eyebrow::before { content: ""; width: 6mm; height: 1mm; background: var(--color-link); }
+h2 { font-size: 19pt; line-height: 1.08; font-weight: 800; letter-spacing: -.01em; }
+h3 { font-size: 11pt; line-height: 1.2; font-weight: 700; }
+.muted { color: var(--color-text-secondary); }
+.small { font-size: 8pt; color: var(--color-text-secondary); line-height: 1.35; }
+
+/* Icons: bare line drawings, large, leading each item */
+.i { fill: none; stroke: var(--color-brand); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; flex: none; }
+.i .a { stroke: var(--color-link); }
+.i--lg { width: 12mm; height: 12mm; }
+.i--md { width: 9mm; height: 9mm; }
+.on-dark .i, .on-dark .i .a { stroke: #fff; }
+
+/* ---------- Outside 1: how it works ---------- */
+.steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; }
+.steps li { display: grid; grid-template-columns: 12mm 1fr; gap: 4mm; align-items: center; padding: 3.2mm 0; border-bottom: 1px solid var(--color-border); }
+.steps li:first-child { border-top: 1px solid var(--color-border); }
+.steps__when { display: block; font-size: 8pt; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--color-link); }
+.steps__n { color: var(--color-text-secondary); font-weight: 700; margin-right: 1.4mm; }
+.need { background: var(--color-surface-alt); border-radius: var(--radius-md); padding: 3.4mm 4mm; display: grid; gap: 2.2mm; }
+.need div { display: grid; grid-template-columns: 7mm 1fr; gap: 3mm; align-items: center; font-weight: 600; font-size: 10pt; line-height: 1.25; }
+.need svg { width: 7mm; height: 7mm; }
+
+/* ---------- Outside 2: help ---------- */
+.help { display: grid; gap: 0; border-top: 1px solid var(--color-border); }
+.help > div { display: grid; grid-template-columns: 12mm 1fr; gap: 4mm; align-items: center; padding: 3.4mm 0; border-bottom: 1px solid var(--color-border); }
+.help p { color: var(--color-text-secondary); font-size: 10pt; line-height: 1.3; }
+.phoneno { font-family: var(--font-mono); font-size: 15pt; font-weight: 600; color: var(--color-text) !important; }
+.langs { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--color-border); border-radius: var(--radius-sm); }
+.langs span { text-align: center; padding: 2mm .5mm; font-weight: 700; font-size: 11pt; border-right: 1px solid var(--color-border); }
+.langs span:last-child { border-right: 0; }
+.langs small { display: block; font-weight: 400; font-size: 8pt; color: var(--color-text-secondary); }
+.fill { flex: 1; }
+
+/* ---------- Cover ---------- */
+.cover { background: var(--color-brand); color: #fff; padding: 0; gap: 0; }
+.proto { background: var(--color-proto); font-size: 8pt; padding: 1.6mm 9mm; }
+.proto strong { background: #fff; color: var(--color-proto); padding: 0 1.6mm; margin-right: 2mm; letter-spacing: .08em; }
+.cover__head { padding: 4.4mm 9mm; display: flex; align-items: center; gap: 3mm; border-bottom: 2.6mm solid var(--color-link); font-weight: 700; font-size: 10pt; line-height: 1.15; }
+.cover__head small { display: block; font-weight: 400; font-size: 8pt; opacity: .85; }
+.cover__head svg { width: 10mm; height: 10mm; }
+.cover__body { padding: 9mm 9mm 0; display: flex; flex-direction: column; gap: 5mm; }
+.cover h1 { font-size: 30pt; line-height: 1.03; font-weight: 800; letter-spacing: -.02em; }
+.cover__lead { font-size: 11.5pt; color: #d5e0ec; line-height: 1.35; }
+.cover__art { flex: 1; position: relative; min-height: 0; }
+.cover__art svg { position: absolute; inset: 0; width: 100%; height: 100%; }
+.cover__cta { background: var(--color-surface); color: var(--color-text); margin: 0 9mm 9mm; border-radius: var(--radius-md); padding: 3.4mm; display: grid; grid-template-columns: 22mm 1fr; gap: 4mm; align-items: center; }
+.qr { width: 22mm; height: 22mm; border: .5mm dashed var(--color-border); border-radius: var(--radius-sm); display: grid; place-items: center; text-align: center; font-size: 7pt; color: var(--color-text-secondary); line-height: 1.2; padding: 1mm; }
+.cover__cta b { display: block; font-size: 12pt; line-height: 1.2; }
+.cover__cta span { font-size: 9pt; color: var(--color-text-secondary); }
+
+/* ---------- Inside 1: what changes ---------- */
+.hero { background: var(--color-brand); color: #fff; border-radius: var(--radius-md); padding: 5mm 5mm 4.5mm; display: grid; grid-template-columns: 1fr auto 1fr; align-items: end; gap: 3mm; }
+.hero__num { font-size: 44pt; font-weight: 800; line-height: .9; letter-spacing: -.03em; display: block; }
+.hero__old .hero__num { color: #8fa3b8; }
+.hero__unit { display: block; font-size: 10pt; font-weight: 700; margin-top: 1.4mm; }
+.hero__sub { display: block; font-size: 8pt; color: #c3d0de; line-height: 1.25; margin-top: .6mm; }
+.hero__arrow { width: 9mm; height: 9mm; margin-bottom: 8mm; }
+.compare { display: grid; border-top: 1px solid var(--color-border); }
+.compare > div { display: grid; grid-template-columns: 9mm 1fr; gap: 3.4mm; align-items: center; padding: 2.6mm 0; border-bottom: 1px solid var(--color-border); }
+.compare b { display: block; font-size: 10.5pt; line-height: 1.2; }
+.compare span { display: block; font-size: 8.6pt; color: var(--color-text-secondary); line-height: 1.25; }
+
+/* ---------- Inside 2: if something needs attention ---------- */
+.att { display: grid; gap: 0; border-top: 1px solid var(--color-border); }
+.att > div { display: grid; grid-template-columns: 12mm 1fr; gap: 4mm; padding: 3.6mm 0; border-bottom: 1px solid var(--color-border); align-items: start; }
+.att__top { display: flex; justify-content: space-between; gap: 2mm; align-items: baseline; }
+.att p { font-size: 9.6pt; color: var(--color-text-secondary); line-height: 1.32; margin-top: .8mm; }
+.tag { display: inline-block; font-size: 8pt; font-weight: 700; padding: .5mm 2mm; border-radius: var(--radius-sm); white-space: nowrap; background: var(--color-brand-tint); color: var(--color-brand); }
+.tag--error { background: var(--color-error-tint); color: var(--color-error); }
+.pause { background: var(--color-warning-tint); border-left: var(--border-width-thick) solid var(--color-warning-edge); padding: 3mm 4mm; display: grid; grid-template-columns: 9mm 1fr; gap: 3mm; align-items: center; font-size: 10pt; line-height: 1.3; }
+.pause .i { stroke: var(--color-warning); } .pause .i .a { stroke: var(--color-warning); }
+
+/* ---------- Inside 3: rights ---------- */
+.yn { display: grid; grid-template-columns: 1fr 1fr; gap: 3mm; }
+.yn > div { border-radius: var(--radius-md); padding: 4mm 3.6mm; display: flex; flex-direction: column; gap: 1.6mm; }
+.yn b { font-size: 12pt; line-height: 1.15; }
+.yn p { font-size: 9pt; line-height: 1.25; }
+.yn__yes { background: var(--color-success-tint); border: 1px solid var(--color-success); }
+.yn__yes .i, .yn__yes .i .a { stroke: var(--color-success); }
+.yn__no { background: var(--color-brand); color: #fff; }
+.yn__no p { color: #d5e0ec; }
+.rights { display: grid; border-top: 1px solid var(--color-border); }
+.rights > div { display: grid; grid-template-columns: 9mm 1fr; gap: 3.4mm; align-items: center; padding: 2.8mm 0; border-bottom: 1px solid var(--color-border); }
+.rights b { display: block; font-size: 10.5pt; line-height: 1.2; }
+.rights span { display: block; font-size: 8.6pt; color: var(--color-text-secondary); line-height: 1.25; }
+/* Lists stretch so every panel is filled evenly, no empty bands */
+.steps, .help, .compare, .att, .rights { flex: 1; grid-auto-rows: 1fr; }
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="bell" viewBox="0 0 24 24"><path d="M6 17V11a6 6 0 0 1 12 0v6l1.5 2h-15z"/><path class="a" d="M10 21h4"/></symbol>
+  <symbol id="laptop" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="11" rx="1.5"/><path d="M2 19h20"/><path class="a" d="M8.5 10.5l2.2 2.2 4.5-4.5"/></symbol>
+  <symbol id="search" viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5L21 21"/><path class="a" d="M7.8 10.6l2 2 3.6-3.8"/></symbol>
+  <symbol id="calendar" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/><path class="a" d="M9 15l2 2 4-4"/></symbol>
+  <symbol id="card" viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><circle cx="8.5" cy="11.5" r="2.2"/><path d="M5.5 16.5c.6-1.6 1.7-2.4 3-2.4s2.4.8 3 2.4"/><path class="a" d="M14 10h5M14 13.5h4"/></symbol>
+  <symbol id="phone" viewBox="0 0 24 24"><path d="M7 3h3l1.5 4.5-2.2 1.4a11 11 0 0 0 5.8 5.8l1.4-2.2L21 14v3a2.5 2.5 0 0 1-2.5 2.5C10 19.5 4.5 14 4.5 5.5A2.5 2.5 0 0 1 7 3z"/></symbol>
+  <symbol id="building" viewBox="0 0 24 24"><path d="M3 20h18M5 20V9l7-5 7 5v11"/><path d="M9 20v-5h6v5"/><path class="a" d="M9 11h.01M12 11h.01M15 11h.01"/></symbol>
+  <symbol id="screen" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M9 20h6M12 16v4"/><path class="a" d="M7 8.5h6M7 11.5h10"/></symbol>
+  <symbol id="globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path class="a" d="M12 3c2.6 2.6 3.8 5.6 3.8 9s-1.2 6.4-3.8 9c-2.6-2.6-3.8-5.6-3.8-9S9.4 5.6 12 3z"/></symbol>
+  <symbol id="eye" viewBox="0 0 24 24"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z"/><circle class="a" cx="12" cy="12" r="3"/></symbol>
+  <symbol id="clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path class="a" d="M12 7v5l3.2 2"/></symbol>
+  <symbol id="pause" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path class="a" d="M10 8.5v7M14 8.5v7"/></symbol>
+  <symbol id="folder" viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><path class="a" d="M8.5 13.5l2.5 2.5 4.5-4.5"/></symbol>
+  <symbol id="doc" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/><path class="a" d="M9.5 13h5M9.5 16.5h3"/></symbol>
+  <symbol id="chat" viewBox="0 0 24 24"><path d="M4 5h16v11H10l-4 4v-4H4z"/><path class="a" d="M8 9h8M8 12h5"/></symbol>
+  <symbol id="scale" viewBox="0 0 24 24"><path d="M12 4v16M7 20h10M5 7h14"/><path d="M5 7l-3 6a3 3 0 0 0 6 0zM19 7l-3 6a3 3 0 0 0 6 0z"/></symbol>
+  <symbol id="computer" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M9 20h6M12 16v4"/><path class="a" d="M8.5 10l2.5 2.5L16 7.5"/></symbol>
+  <symbol id="person" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4.5 4.2-7 8-7s7 2.5 8 7"/></symbol>
+  <symbol id="key" viewBox="0 0 24 24"><circle cx="8" cy="12" r="4"/><path class="a" d="M12 12h9M18 12v3M21 12v2"/></symbol>
+  <symbol id="money" viewBox="0 0 24 24"><rect x="2.5" y="6" width="19" height="12" rx="2"/><path d="M2.5 10h19"/><path class="a" d="M6 14.5h4"/></symbol>
+  <symbol id="shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 4.5-3.4 8-8 9-4.6-1-8-4.5-8-9V6z"/><path class="a" d="M8.5 12l2.5 2.5 4.5-5"/></symbol>
+  <symbol id="refresh" viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-14.5-4.5M4 13a8 8 0 0 0 14.5 4.5"/><path class="a" d="M4 4v3h3M20 20v-3h-3"/></symbol>
+  <symbol id="checklist" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path class="a" d="M7.5 8.5l1.5 1.5 2.5-2.5M7.5 14.5l1.5 1.5 2.5-2.5"/><path d="M13.5 9h3M13.5 15h3"/></symbol>
+  <symbol id="arrow" viewBox="0 0 24 24"><path d="M4 12h15M14 7l5 5-5 5"/></symbol>
+  <symbol id="equal" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path class="a" d="M8 10h8M8 14h8"/></symbol>
+</svg>
+
+<!-- ======================= OUTSIDE ======================= -->
+<p class="sheet-label">Outside (print side 1): inside flap, back, front cover</p>
+<section class="sheet" aria-label="Outside of the brochure">
+
+  <!-- Inside flap: how it works (first thing seen when the cover opens) -->
+  <div class="panel">
+    <p class="eyebrow">How it works</p>
+    <h2>Six steps from reminder to card</h2>
+    <ol class="steps">
+      <li><svg class="i i--lg" viewBox="0 0 24 24"><use href="#bell"/></svg><div><span class="steps__when">90 days before expiry</span><h3><span class="steps__n">1</span>You get a reminder</h3></div></li>
+      <li><svg class="i i--lg" viewBox="0 0 24 24"><use href="#laptop"/></svg><div><span class="steps__when">From 2 months before</span><h3><span class="steps__n">2</span>You apply online</h3></div></li>
+      <li><svg class="i i--lg" viewBox="0 0 24 24"><use href="#checklist"/></svg><div><span class="steps__when">Before you submit</span><h3><span class="steps__n">3</span>An automatic check helps you fix mistakes</h3></div></li>
+      <li><svg class="i i--lg" viewBox="0 0 24 24"><use href="#search"/></svg><div><span class="steps__when">5 working days</span><h3><span class="steps__n">4</span>We check and decide</h3></div></li>
+      <li><svg class="i i--lg" viewBox="0 0 24 24"><use href="#calendar"/></svg><div><span class="steps__when">With the decision</span><h3><span class="steps__n">5</span>Your appointment is assigned</h3></div></li>
+      <li><svg class="i i--lg" viewBox="0 0 24 24"><use href="#card"/></svg><div><span class="steps__when">15 days after fingerprints</span><h3><span class="steps__n">6</span>Your TIE card is ready</h3></div></li>
+    </ol>
+    <div class="need">
+      <h3>You need</h3>
+      <div><svg class="i" viewBox="0 0 24 24"><use href="#key"/></svg>Cl@ve or a digital certificate</div>
+      <div><svg class="i" viewBox="0 0 24 24"><use href="#money"/></svg>A bank card for the fee</div>
+      <div><svg class="i" viewBox="0 0 24 24"><use href="#folder"/></svg>No documents to upload in most cases</div>
+    </div>
+  </div>
+
+  <!-- Back: help -->
+  <div class="panel">
+    <p class="eyebrow">Help</p>
+    <h2>Prefer to apply with a person?</h2>
+    <p class="muted">Same application, same rules, same timelines.</p>
+    <div class="help">
+      <div><svg class="i i--lg" viewBox="0 0 24 24"><use href="#phone"/></svg><div><h3>Call</h3><p class="phoneno">900 000 000</p><p>Monday to Friday, 9:00 to 18:00</p></div></div>
+      <div><svg class="i i--lg" viewBox="0 0 24 24"><use href="#building"/></svg><div><h3>Visit</h3><p>Madrid immigration office<br>C/ García de Paredes 65</p></div></div>
+      <div><svg class="i i--lg" viewBox="0 0 24 24"><use href="#screen"/></svg><div><h3>Assisted mode online</h3><p>Larger text and simpler steps</p></div></div>
+    </div>
+    <div class="row" style="display:flex;gap:3mm;align-items:center"><svg class="i i--md" viewBox="0 0 24 24"><use href="#globe"/></svg><h3>In four languages</h3></div>
+    <div class="langs"><span lang="es">ES<small>Español</small></span><span lang="en">EN<small>English</small></span><span lang="fr">FR<small>Français</small></span><span lang="ar">AR<small>العربية</small></span></div>
+    <p class="small"><strong>Student prototype.</strong> Proposed service design, not an official government service. Phone number, address and people are fictional.<br>Sources: RD 1155/2024; Ley 39/2015; Ministerio de Inclusión, Madrid renewals, January 2025.</p>
+  </div>
+
+  <!-- Front cover -->
+  <div class="panel cover">
+    <div class="proto"><strong>PROTOTYPE</strong>Student project, not an official service</div>
+    <div class="cover__head">
+      <svg viewBox="0 0 36 36" aria-hidden="true"><rect x="3" y="7" width="30" height="22" rx="3" fill="none" stroke="#fff" stroke-width="2.5"/><circle cx="12" cy="18" r="4" fill="#fff"/><path d="M19 15h9M19 20h7" stroke="#fff" stroke-width="2.5" stroke-linecap="round"/></svg>
+      <span>Residence Renewal Service<small>Madrid, residence permit and TIE card</small></span>
+    </div>
+    <div class="cover__body">
+      <h1>Renew your residence permit and TIE card online</h1>
+      <p class="cover__lead">Pre-filled application. One police visit. Most decisions in 5 working days.</p>
+    </div>
+    <div class="cover__art" aria-hidden="true">
+      <svg viewBox="0 0 330 200" preserveAspectRatio="xMidYMid meet">
+        <rect x="18" y="96" width="294" height="1.5" fill="#1d58a6" opacity=".6"/>
+        <!-- calendar -->
+        <g transform="translate(40 52)">
+          <rect width="92" height="86" rx="6" fill="#0f3a62" stroke="#8fb3dc" stroke-width="2"/>
+          <rect width="92" height="20" rx="6" fill="#1d58a6"/><rect y="12" width="92" height="8" fill="#1d58a6"/>
+          <path d="M22 -6v14M70 -6v14" stroke="#8fb3dc" stroke-width="3" stroke-linecap="round"/>
+          <g fill="#1b4b78"><rect x="10" y="30" width="14" height="11" rx="2"/><rect x="30" y="30" width="14" height="11" rx="2"/><rect x="50" y="30" width="14" height="11" rx="2"/><rect x="70" y="30" width="12" height="11" rx="2"/><rect x="10" y="47" width="14" height="11" rx="2"/><rect x="30" y="47" width="14" height="11" rx="2"/><rect x="70" y="47" width="12" height="11" rx="2"/><rect x="10" y="64" width="14" height="11" rx="2"/><rect x="30" y="64" width="14" height="11" rx="2"/><rect x="50" y="64" width="14" height="11" rx="2"/></g>
+          <rect x="50" y="47" width="14" height="11" rx="2" fill="#1a6b3c"/>
+          <path d="M53 52.5l3 3 5-6" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </g>
+        <!-- TIE card -->
+        <g transform="translate(160 44)">
+          <rect width="136" height="88" rx="8" fill="#fff"/>
+          <rect width="136" height="20" rx="8" fill="#1d58a6"/><rect y="12" width="136" height="8" fill="#1d58a6"/>
+          <text x="10" y="14.5" font-family="Public Sans, Arial" font-weight="800" font-size="10" fill="#fff">TIE</text>
+          <rect x="10" y="30" width="30" height="40" rx="3" fill="#e8eef5"/><circle cx="25" cy="44" r="7" fill="#b4bdc8"/><path d="M14 66c2-8 6-11 11-11s9 3 11 11" fill="#b4bdc8"/>
+          <rect x="50" y="32" width="72" height="6" rx="3" fill="#e8eef5"/><rect x="50" y="45" width="56" height="6" rx="3" fill="#e8eef5"/><rect x="50" y="58" width="40" height="6" rx="3" fill="#e8eef5"/>
+          <circle cx="122" cy="80" r="16" fill="#1a6b3c" stroke="#0b2e4f" stroke-width="3"/>
+          <path d="M114 80l6 6 10-11" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </g>
+        <path d="M138 96h16" stroke="#8fb3dc" stroke-width="2.5" stroke-linecap="round"/><path d="M149 91l5 5-5 5" fill="none" stroke="#8fb3dc" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div class="cover__cta">
+      <div class="qr">QR code to the online service</div>
+      <div><b>Start from 2 months before your permit expires</b><span>Sign in with Cl@ve or a digital certificate</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= INSIDE ======================= -->
+<p class="sheet-label">Inside (print side 2): what changes, if something needs attention, your rights</p>
+<section class="sheet" aria-label="Inside of the brochure">
+
+  <!-- What changes -->
+  <div class="panel">
+    <p class="eyebrow">What changes</p>
+    <h2>Decisions in days, not months</h2>
+    <div class="hero on-dark">
+      <div class="hero__old"><span class="hero__num">88</span><span class="hero__unit">days</span><span class="hero__sub">average until now</span></div>
+      <svg class="i hero__arrow" viewBox="0 0 24 24"><use href="#arrow"/></svg>
+      <div><span class="hero__num">5</span><span class="hero__unit">working days</span><span class="hero__sub">target for most renewals</span></div>
+    </div>
+    <p class="small">Until now: Madrid renewals, Ministerio de Inclusión, January 2025. If an officer reviews your case, the target is 30 days.</p>
+    <div class="compare">
+      <div><svg class="i i--md" viewBox="0 0 24 24"><use href="#bell"/></svg><div><b>We remind you</b><span>Until now, you tracked the date yourself</span></div></div>
+      <div><svg class="i i--md" viewBox="0 0 24 24"><use href="#doc"/></svg><div><b>Your form is pre-filled</b><span>Until now, you resubmitted documents</span></div></div>
+      <div><svg class="i i--md" viewBox="0 0 24 24"><use href="#eye"/></svg><div><b>You follow every step</b><span>Until now, you waited without updates</span></div></div>
+      <div><svg class="i i--md" viewBox="0 0 24 24"><use href="#calendar"/></svg><div><b>Your appointment is assigned</b><span>Until now, you searched for a cita</span></div></div>
+      <div><svg class="i i--md" viewBox="0 0 24 24"><use href="#building"/></svg><div><b>One police visit</b><span>Until now, two visits</span></div></div>
+    </div>
+  </div>
+
+  <!-- If something needs attention -->
+  <div class="panel">
+    <p class="eyebrow">If something needs attention</p>
+    <h2>You are told, and you can respond</h2>
+    <div class="att">
+      <div><svg class="i i--lg" viewBox="0 0 24 24"><use href="#doc"/></svg><div><div class="att__top"><h3>Something is missing</h3><span class="tag">10 days</span></div><p>Usually caught before you submit. If not, you get a notice saying what to fix.</p></div></div>
+      <div><svg class="i i--lg" viewBox="0 0 24 24"><use href="#chat"/></svg><div><div class="att__top"><h3>An officer has a question</h3><span class="tag">10 to 15 days</span></div><p>You see what was found and answer before any decision.</p></div></div>
+      <div><svg class="i i--lg" viewBox="0 0 24 24"><use href="#refresh"/></svg><div><div class="att__top"><h3>Your situation changed</h3><span class="tag">up to 30 days</span></div><p>Declare it in the form. An officer reviews it.</p></div></div>
+      <div><svg class="i i--lg" viewBox="0 0 24 24"><use href="#scale"/></svg><div><div class="att__top"><h3>You disagree</h3><span class="tag tag--error">1 month</span></div><p>Request a review online. A different official decides. Court: 2 months.</p></div></div>
+    </div>
+    <div class="pause"><svg class="i i--md" viewBox="0 0 24 24"><use href="#pause"/></svg><div><b>The clock pauses</b> while you fix something, so those days don't count against you.</div></div>
+    <p class="small">Your current permit remains valid while your application is decided.</p>
+  </div>
+
+  <!-- Your rights -->
+  <div class="panel">
+    <p class="eyebrow">Your rights</p>
+    <h2>Automation can approve. Only a person can refuse.</h2>
+    <div class="yn">
+      <div class="yn__yes"><svg class="i i--md" viewBox="0 0 24 24"><use href="#computer"/></svg><b>Automatic check</b><p>Approves when every requirement is met</p></div>
+      <div class="yn__no on-dark"><svg class="i i--md" viewBox="0 0 24 24"><use href="#person"/></svg><b>An officer</b><p>Decides every refusal, after hearing you</p></div>
+    </div>
+    <div class="rights">
+      <div><svg class="i i--md" viewBox="0 0 24 24"><use href="#equal"/></svg><div><b>Nationality is never used</b><span>No risk scores</span></div></div>
+      <div><svg class="i i--md" viewBox="0 0 24 24"><use href="#shield"/></svg><div><b>No silent changes</b><span>If a later check finds something, you are told first</span></div></div>
+      <div><svg class="i i--md" viewBox="0 0 24 24"><use href="#clock"/></svg><div><b>No decision by day 90 means granted</b><span>RD 1155/2024</span></div></div>
+      <div><svg class="i i--md" viewBox="0 0 24 24"><use href="#folder"/></svg><div><b>You can object to data sharing</b><span>You then upload documents yourself (Ley 39/2015, art. 28)</span></div></div>
+    </div>
+  </div>
+</section>
+
+</body>
+</html>
