@@ -139,6 +139,7 @@ h3 { font-size: 11pt; line-height: 1.2; font-weight: 700; }
   <symbol id="money" viewBox="0 0 24 24"><rect x="2.5" y="6" width="19" height="12" rx="2"/><path d="M2.5 10h19"/><path class="a" d="M6 14.5h4"/></symbol>
   <symbol id="shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 4.5-3.4 8-8 9-4.6-1-8-4.5-8-9V6z"/><path class="a" d="M8.5 12l2.5 2.5 4.5-5"/></symbol>
   <symbol id="refresh" viewBox="0 0 24 24"><path d="M20 11a8 8 0 0 0-14.5-4.5M4 13a8 8 0 0 0 14.5 4.5"/><path class="a" d="M4 4v3h3M20 20v-3h-3"/></symbol>
+  <symbol id="checklist" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path class="a" d="M7.5 8.5l1.5 1.5 2.5-2.5M7.5 14.5l1.5 1.5 2.5-2.5"/><path d="M13.5 9h3M13.5 15h3"/></symbol>
   <symbol id="arrow" viewBox="0 0 24 24"><path d="M4 12h15M14 7l5 5-5 5"/></symbol>
   <symbol id="equal" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path class="a" d="M8 10h8M8 14h8"/></symbol>
 </svg>
@@ -150,13 +151,14 @@ h3 { font-size: 11pt; line-height: 1.2; font-weight: 700; }
   <!-- Inside flap: how it works (first thing seen when the cover opens) -->
   <div class="panel">
     <p class="eyebrow">How it works</p>
-    <h2>Five steps from reminder to card</h2>
+    <h2>Six steps from reminder to card</h2>
     <ol class="steps">
       <li><svg class="i i--lg" viewBox="0 0 24 24"><use href="#bell"/></svg><div><span class="steps__when">90 days before expiry</span><h3><span class="steps__n">1</span>You get a reminder</h3></div></li>
       <li><svg class="i i--lg" viewBox="0 0 24 24"><use href="#laptop"/></svg><div><span class="steps__when">From 2 months before</span><h3><span class="steps__n">2</span>You apply online</h3></div></li>
-      <li><svg class="i i--lg" viewBox="0 0 24 24"><use href="#search"/></svg><div><span class="steps__when">5 working days</span><h3><span class="steps__n">3</span>We check and decide</h3></div></li>
-      <li><svg class="i i--lg" viewBox="0 0 24 24"><use href="#calendar"/></svg><div><span class="steps__when">With the decision</span><h3><span class="steps__n">4</span>Your appointment is assigned</h3></div></li>
-      <li><svg class="i i--lg" viewBox="0 0 24 24"><use href="#card"/></svg><div><span class="steps__when">15 days after fingerprints</span><h3><span class="steps__n">5</span>Your TIE card is ready</h3></div></li>
+      <li><svg class="i i--lg" viewBox="0 0 24 24"><use href="#checklist"/></svg><div><span class="steps__when">Before you submit</span><h3><span class="steps__n">3</span>An automatic check helps you fix mistakes</h3></div></li>
+      <li><svg class="i i--lg" viewBox="0 0 24 24"><use href="#search"/></svg><div><span class="steps__when">5 working days</span><h3><span class="steps__n">4</span>We check and decide</h3></div></li>
+      <li><svg class="i i--lg" viewBox="0 0 24 24"><use href="#calendar"/></svg><div><span class="steps__when">With the decision</span><h3><span class="steps__n">5</span>Your appointment is assigned</h3></div></li>
+      <li><svg class="i i--lg" viewBox="0 0 24 24"><use href="#card"/></svg><div><span class="steps__when">15 days after fingerprints</span><h3><span class="steps__n">6</span>Your TIE card is ready</h3></div></li>
     </ol>
     <div class="need">
       <h3>You need</h3>
@@ -252,7 +254,7 @@ h3 { font-size: 11pt; line-height: 1.2; font-weight: 700; }
     <p class="eyebrow">If something needs attention</p>
     <h2>You are told, and you can respond</h2>
     <div class="att">
-      <div><svg class="i i--lg" viewBox="0 0 24 24"><use href="#doc"/></svg><div><div class="att__top"><h3>Something is missing</h3><span class="tag">10 days</span></div><p>You get a notice saying what to fix and how.</p></div></div>
+      <div><svg class="i i--lg" viewBox="0 0 24 24"><use href="#doc"/></svg><div><div class="att__top"><h3>Something is missing</h3><span class="tag">10 days</span></div><p>Usually caught before you submit. If not, you get a notice saying what to fix.</p></div></div>
       <div><svg class="i i--lg" viewBox="0 0 24 24"><use href="#chat"/></svg><div><div class="att__top"><h3>An officer has a question</h3><span class="tag">10 to 15 days</span></div><p>You see what was found and answer before any decision.</p></div></div>
       <div><svg class="i i--lg" viewBox="0 0 24 24"><use href="#refresh"/></svg><div><div class="att__top"><h3>Your situation changed</h3><span class="tag">up to 30 days</span></div><p>Declare it in the form. An officer reviews it.</p></div></div>
       <div><svg class="i i--lg" viewBox="0 0 24 24"><use href="#scale"/></svg><div><div class="att__top"><h3>You disagree</h3><span class="tag tag--error">1 month</span></div><p>Request a review online. A different official decides. Court: 2 months.</p></div></div>
