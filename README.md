@@ -27,6 +27,7 @@ Then open http://localhost:8765 (citizen app) and http://localhost:8765/design-s
 index.html                 citizen app shell
 js/data.js                 shared case model + demo engine (window.RRS)
 js/i18n.js                 interface strings: en, es, fr, ar (RTL)
+js/doccheck.js             document checker (window.DocCheck), runs before any upload is sent
 js/citizen.js              citizen screens and routing (#home, #case, ...)
 design-system/tokens.css   colour, type, spacing, shape tokens
 design-system/components.css   every .c-* component
@@ -48,6 +49,16 @@ Also: assisted mode (bigger text, help first), 4 languages incl. Arabic RTL, "th
 
 The demo bar has **Officer** buttons for Lucía so the citizen demo works on its own. When the officer app exists, those actions happen there instead.
 
+## Pre-submit check
+
+Before submitting, `#precheck` checks the application against the records other offices hold and lists each item as **OK**, **Fix before submitting**, **Check** or **An officer will review**. Problems can be fixed in place (Robert pays the €2.10 difference there, so his renewal goes straight through). The person can still submit without fixing; the post-submit fix-it loop then catches it.
+
+Every upload (pre-check, fix-it, answering an officer, appeal) runs `DocCheck.check(file, expect)` first:
+- real checks: file type, size, PDF validity, password protection, image resolution
+- simulated: "does this look like the requested document" (file-name based; a live service would use a document-reading model)
+
+Files that fail (wrong type, too large, password-protected) can't be sent. The check never decides the application.
+
 ## Screens
 
 | Hash | Screen |
@@ -56,7 +67,7 @@ The demo bar has **Officer** buttons for Lucía so the citizen demo works on its
 | `#signin` / `#helpin` | sign in (Cl@ve, certificate) or get help from a person |
 | `#check` | eligibility (3 questions) |
 | `#apply` | pre-filled details from other offices, "has anything changed?" |
-| `#pay` → `#review` → `#done` | fee, check answers + declaration, confirmation |
+| `#pay` → `#precheck` → `#review` → `#done` | fee, **pre-submit check**, check answers + declaration, confirmation |
 | `#case` | status, 90-day clock, tasks, progress, messages |
 | `#fix` | fix-it notice with one-click fix |
 | `#respond` | officer's question (flag card) + answer |

@@ -296,7 +296,9 @@
       c.route = "human";
       log(c, "Sent to an officer because something changed");
     }
-    if (c.id === "robert") {
+    if (answers.preDoc) { c.preDocs = [answers.preDoc]; log(c, "Document added before submitting: " + answers.preDoc); (c.flags || []).forEach(function (f) { f.evidence += " + applicant's document: " + answers.preDoc; }); }
+    if (answers.feeFixed) { log(c, "Fee difference paid during the pre-check"); if (c.route === "fix") c.route = "auto"; c.checks = c.checks.map(function (k) { return k[0] === "Fee payment" ? [k[0], k[1], "green"] : k; }); }
+    if (c.id === "robert" && !answers.feeFixed) {
       // Automatic completeness check at filing: fee mismatch -> fix-it loop
       c.fix = { what: "The fee you paid is €2.10 short", why: "The renewal fee went up on 1 November. You paid the old amount.", amount: 2.10, deadline: api.state.day + RULES.fixDeadlineDays, done: false };
       c.status = "fix"; c.pauseStart = api.state.day;

@@ -9,7 +9,7 @@
   var app = document.getElementById("app");
 
   /* ---- Page session (not persisted) ---------------------------------- */
-  var session = { signedIn: {}, draft: {}, toast: "", explain: {}, wrongField: null, errors: {} };
+  var session = { signedIn: {}, draft: {}, toast: "", explain: {}, wrongField: null, errors: {}, docs: {} };
 
   function S() { return R.state; }
   function c() { return R.getCase(S().persona); }
@@ -30,9 +30,19 @@
   function banner(kind, title, heading, body) {
     return '<div class="c-banner' + (kind ? " c-banner--" + kind : "") + '" role="region" aria-label="' + esc(title) + '"><p class="c-banner__title">' + esc(title) + '</p><div class="c-banner__body">' + (heading ? '<p class="c-banner__heading">' + heading + "</p>" : "") + (body || "") + "</div></div>";
   }
+  /* File input that runs the document check as soon as a file is chosen. */
+  function docSlot(id, label, hint, expect) {
+    var r = session.docs[id];
+    return '<div class="c-field"><label class="c-label" for="' + id + '">' + esc(label) + '</label>' + (hint ? '<span class="c-hint">' + esc(hint) + "</span>" : "") +
+      '<input class="c-file js-doccheck" type="file" id="' + id + '" data-expect="' + (expect || "any") + '" accept=".pdf,.jpg,.jpeg,.png,.heic,application/pdf,image/*">' +
+      '<div id="' + id + '-result" aria-live="polite">' + (r && r.result ? (r.stale ? '<p class="t-small t-secondary" style="margin-top:8px">Checked: ' + esc(r.result.name) + "</p>" : window.DocCheck.render(r.result)) : "") + "</div></div>";
+  }
+  function docBlocked(id) { var r = session.docs[id]; return r && r.pending ? "pending" : r && r.result && r.result.status === "error" ? "error" : null; }
+  function docName(id) { var r = session.docs[id]; return r && r.result && r.result.status !== "error" ? r.result.name : null; }
+
   function back(href) { return '<a class="c-back" href="' + href + '">' + esc(t("back")) + "</a>"; }
   function steps(n) {
-    var names = [t("step1"), t("step2"), t("step3"), t("step4")];
+    var names = [t("step1"), t("step2"), t("step3"), t("step4"), t("step5")];
     return '<ol class="c-steps" aria-label="Progress">' + names.map(function (s, i) {
       return "<li" + (i + 1 === n ? ' aria-current="step"' : i + 1 < n ? ' class="is-done"' : "") + ">" + esc(s) + "</li>";
     }).join("") + "</ol>";
@@ -180,15 +190,75 @@
     return back("#apply") + steps(3) + "<h1>" + esc(t("h_pay")) + "</h1>" + body;
   }
 
+  /* ---- Pre-submit check ---------------------------------------------- */
+  // Each item: { status: "ok" | "fix" | "warn" | "info", title, detail, action (html) }
+  function precheckItems() {
+    var k = c(), d = draft(), out = [];
+    out.push({ status: "ok", title: "Identity and current permit", detail: "Match the police foreigners' register." });
+    out.push({ status: "ok", title: "Filing date", detail: "You are inside the renewal window (from " + fmt(k.expiry - R.RULES.fileWindowBeforeExpiry) + ")." });
+    if (d.paidMode === "existing" && !d.feeTopUp) {
+      out.push({ status: "fix", title: "Your fee payment is " + money(2.1) + " short", detail: "The fee changed on 1 November. You paid " + money(R.RULES.fee - 2.1) + " and it is now " + money(R.RULES.fee) + ".",
+        action: '<button class="c-button" type="button" data-act="pc-topup" style="margin:8px 0 0">Pay the ' + money(2.1) + " difference (demo)</button>" });
+    } else out.push({ status: "ok", title: "Fee paid in full", detail: money(R.RULES.fee) + ", Modelo 790, code 012." });
+    var gap = k.data.filter(function (r) { return /gap/i.test(r[1]); })[0];
+    if (gap) {
+      var up = docName("pc-doc");
+      out.push(up ? { status: "info", title: "Document attached: " + up, detail: "Social Security shows a gap in your contributions. An officer will review it with your document." }
+                  : { status: "warn", title: "Social Security shows a gap in your contributions", detail: gap[1] + ". An officer will ask you about it. If you add a document now, you may avoid that question.",
+                      action: docSlot("pc-doc", "Add a document (optional)", "For example your new work contract or a letter from your employer.", "contract") });
+    } else out.push({ status: "ok", title: "Social Security and tax", detail: "No gaps or debts found." });
+    if (d.changed && (!d.changeText || d.changeText.trim().length < 5)) {
+      out.push({ status: "fix", title: "Tell us what changed", detail: "You said something changed, but didn't say what. A few words are enough.",
+        action: '<label class="c-label t-small" for="pc-change" style="margin-top:8px">What changed?</label><textarea class="c-textarea" id="pc-change" rows="2"></textarea><button class="c-button c-button--secondary" type="button" data-act="pc-savechange" style="margin-top:8px">Save</button>' });
+    } else if (d.changed) out.push({ status: "info", title: "Change declared", detail: '"' + d.changeText + '". An officer will review it. Target: 30 days.' });
+    Object.keys(d.notes).forEach(function (i) { out.push({ status: "info", title: "Correction: " + k.data[i][0], detail: '"' + d.notes[i] + '". An officer will check it with the source office.' }); });
+    if (d.elig.record || d.elig.madrid === false || d.elig.employer === false) out.push({ status: "info", title: "Your answers need a person to look", detail: "An officer reviews your application instead of the automatic check. Target: 30 days." });
+    if (!d.sms && !d.email) out.push({ status: "warn", title: "No SMS or email updates", detail: "You'll only see updates if you sign in. You can turn them on in the previous step." });
+    return out;
+  }
+  function pcSummary() {
+    var items = precheckItems(), fix = items.filter(function (i) { return i.status === "fix"; }).length, rev = items.filter(function (i) { return i.status === "info" || i.status === "warn"; }).length;
+    return fix ? fix + " to fix (submitting anyway)" : rev ? "Ready. " + rev + " item" + (rev > 1 ? "s" : "") + " for an officer" : "All clear";
+  }
+  function scrPrecheck() {
+    var k = c(), d = draft();
+    if (!signedIn()) return redirect("signin");
+    if (isOpen(k)) return dupNotice();
+    if (!d.paid) return redirect("pay");
+    if (!session.pc) {
+      session.pc = "running";
+      setTimeout(function () { session.pc = "done"; if (location.hash === "#precheck") render(); }, 1400);
+    }
+    var head = back("#pay") + steps(4) + "<h1>Check your application before you submit</h1>" +
+      '<p class="t-lead">We check your application now, so you can fix problems before you send it, not after.</p>';
+    if (session.pc === "running") {
+      return head + '<div class="c-card c-card--alt" role="status"><p class="c-card__title">Checking your application…</p><ul class="c-list"><li>Comparing your details with the police foreigners\' register</li><li>Checking your fee payment</li><li>Checking Social Security and tax records</li><li>Reading your answers and corrections</li></ul></div>';
+    }
+    var items = precheckItems();
+    var fix = items.filter(function (i) { return i.status === "fix"; }).length;
+    var forOfficer = items.filter(function (i) { return i.status === "info" || i.status === "warn"; }).length;
+    var TAG = { ok: ["success", "OK"], fix: ["warning", "Fix before submitting"], warn: ["warning", "Check"], info: ["info", "An officer will review"] };
+    var summary = fix ? banner("warning", "Action needed", fix + " thing" + (fix > 1 ? "s" : "") + " to fix before you submit", "<p>Fix it here and your application can go straight through. If you submit without fixing it, we will ask you later and your decision will take longer.</p>")
+      : forOfficer ? banner("", "Ready to submit", "Your application is complete", "<p>" + forOfficer + " item" + (forOfficer > 1 ? "s" : "") + " will be looked at by an officer. That's normal and nothing is refused without asking you first.</p>")
+      : banner("success", "Ready to submit", "Everything looks right", "<p>If nothing changes, your renewal should be approved within 5 working days.</p>");
+    return head + summary +
+      '<ol class="c-tasks" style="list-style:none">' + items.map(function (i) {
+        return '<li style="display:block"><div style="display:flex;justify-content:space-between;gap:var(--space-3);flex-wrap:wrap;align-items:baseline"><strong>' + esc(i.title) + '</strong><span class="c-tag c-tag--' + TAG[i.status][0] + '">' + TAG[i.status][1] + '</span></div><p class="t-small t-secondary" style="margin:4px 0 0">' + esc(i.detail) + "</p>" + (i.action || "") + "</li>";
+      }).join("") + "</ol>" +
+      '<div class="c-button-group">' + (fix ? '<button class="c-button c-button--secondary" type="button" data-act="pc-continue">Submit without fixing</button>' : '<button class="c-button" type="button" data-act="pc-continue">' + esc(t("continue")) + "</button>") + '<button class="c-link" type="button" data-act="pc-rerun">Run the check again</button></div>' +
+      '<details class="c-details"><summary>How this check works</summary><div class="c-details__body"><p>It compares your application with the records other public offices already hold, and reads any document you add. It is automated and uses AI to read documents.</p><p>It only helps you avoid mistakes. It doesn\'t decide your application, and it can\'t refuse you. Nothing is sent until you press Submit.</p></div></details>';
+  }
+
   /* ---- Review and submit -------------------------------------------- */
   function scrReview() {
     var k = c(), d = draft();
     if (!signedIn()) return redirect("signin");
     if (isOpen(k)) return dupNotice();
     if (!d.paid) return redirect("pay");
+    if (!d.checked) return redirect("precheck");
     var row = function (key, val, href) { return '<div class="c-summary__row"><p class="c-summary__key">' + key + '</p><p class="c-summary__value">' + val + '</p><p class="c-summary__action"><a href="' + href + '">Change<span class="u-visually-hidden"> ' + key + "</span></a></p></div>"; };
     var err = session.errors.review;
-    return back("#pay") + steps(4) +
+    return back("#precheck") + steps(5) +
       (err ? '<div class="c-error-summary" role="alert"><h2>There is a problem</h2><a href="#declare">Confirm the declaration to submit</a></div>' : "") +
       "<h1>" + esc(t("h_review")) + "</h1>" +
       '<div class="c-summary">' +
@@ -197,7 +267,8 @@
       row("Anything changed?", d.changed ? "Yes: " + esc(d.changeText || "(no details)") : "No", "#apply") +
       row("Corrections", Object.keys(d.notes).length ? Object.keys(d.notes).map(function (i) { return esc(k.data[i][0]) + ": " + esc(d.notes[i]); }).join("<br>") : "None", "#apply") +
       row("Updates by", [d.sms ? "SMS" : "", d.email ? "Email" : "", "Online"].filter(Boolean).join(", "), "#apply") +
-      row("Fee", d.paidMode === "existing" ? money(R.RULES.fee - 2.1) + " paid at your bank" : money(R.RULES.fee) + " paid by card", "#pay") +
+      row("Fee", d.paidMode === "existing" ? money(R.RULES.fee - 2.1) + " paid at your bank" + (d.feeTopUp ? " + " + money(2.1) + " difference paid online" : "") : money(R.RULES.fee) + " paid by card", "#pay") +
+      row("Pre-check", pcSummary(), "#precheck") +
       "</div>" +
       "<h2>Declaration</h2>" +
       '<form id="f-review" novalidate><div class="c-field' + (err ? " c-field--error" : "") + '">' + (err ? '<span class="c-error-msg">Confirm the declaration to submit</span>' : "") + '<label class="c-choice"><input type="checkbox" id="declare"><span class="c-choice__label">The information is true. I agree that the immigration office can check it with other public offices (Ley 39/2015, art. 28).<small>You can object to this and upload documents yourself instead. <a href="#help">How to object</a></small></span></label></div>' +
@@ -308,7 +379,7 @@
       (session.explain.fix ? '<div class="c-inset" style="margin-top:var(--space-3)"><p>' + (k.id === "robert" ? "The price changed on 1 November. You paid the old price, so €2.10 is missing. Pay the €2.10 and you're done. You don't need to send anything else." : "We need one thing from you before we can continue. Do it before the date above.") + "</p></div>" : "") +
       "</div>" +
       (k.fix.amount ? '<h2 class="t-h3">Pay the difference</h2><p>The form is already filled in for you: Modelo 790, code 012, complementary payment.</p><button class="c-button" type="button" data-act="pay-fix">Pay ' + money(k.fix.amount) + " now (demo)</button>"
-                    : '<h2 class="t-h3">Upload the document</h2><div class="c-field"><label class="c-label" for="fix-file">Upload a clear scan or photo</label><input class="c-file" type="file" id="fix-file"></div><button class="c-button" type="button" data-act="pay-fix">Send</button>') +
+                    : '<h2 class="t-h3">Upload the document</h2>' + docSlot("fix-file", "Upload a clear scan or photo", "", "passport") + '<button class="c-button" type="button" data-act="pay-fix">Send</button>') +
       '<details class="c-details"><summary>What happens if I don\'t fix it in time?</summary><div class="c-details__body"><p>An officer reviews your file. Your application is only closed if an officer signs it. It is never closed automatically.</p></div></details>';
   }
 
@@ -329,7 +400,7 @@
           '<button class="c-link" type="button" data-act="explain" data-k="' + f.id + '">' + (session.explain[f.id] ? "Hide plain explanation" : "Explain this in plain words") + "</button>" +
           (session.explain[f.id] ? '<div class="c-inset" style="margin-top:var(--space-3)"><p>Social Security shows no work for you between June and August. Tell us why, for example if you changed jobs, were on leave, or worked abroad. If you have a document, add it.</p></div>' : "") +
           '<form class="f-respond" data-f="' + f.id + '" novalidate style="margin-top:var(--space-5)"><div class="c-field' + (err ? " c-field--error" : "") + '"><label class="c-label" for="resp-' + f.id + '">Your answer</label><span class="c-hint">Explain in your own words. You can write in any language. Short is fine.</span>' + (err ? '<span class="c-error-msg">Write your answer</span>' : "") + '<textarea class="c-textarea" id="resp-' + f.id + '"></textarea></div>' +
-          '<div class="c-field"><label class="c-label" for="file-' + f.id + '">Add a document (optional)</label><span class="c-hint">For example a work contract or a letter from your employer.</span><input class="c-file" type="file" id="file-' + f.id + '"></div>' +
+          docSlot("file-" + f.id, "Add a document (optional)", "For example a work contract or a letter from your employer.", "contract") +
           '<button class="c-button" type="submit">' + esc(t("saveSend")) + "</button></form></div>";
       }).join("") +
       '<details class="c-details"><summary>What if I don\'t answer?</summary><div class="c-details__body"><p>After the deadline, an officer decides with the information they have. You can still appeal any decision.</p></div></details>';
@@ -388,7 +459,7 @@
       '<div class="c-inset"><p><strong>Officer\'s reason:</strong> ' + esc(k.decision.reason) + "</p></div>" +
       "<h2>If you disagree</h2><p>You have two options. You don't need a lawyer for option 1.</p>" +
       '<div class="c-card"><p class="c-card__title">Option 1: ask for a review (recurso de reposición)</p><p>A different official reviews the decision. Do it within <strong>1 month</strong>, by ' + longDate(k.decision.day + 30) + ".</p>" +
-      '<form id="f-appeal" novalidate><div class="c-field' + (err ? " c-field--error" : "") + '"><label class="c-label" for="appeal-text">Why do you disagree?</label><span class="c-hint">Explain in your own words. You can write in any language.</span>' + (err ? '<span class="c-error-msg">Write why you disagree</span>' : "") + '<textarea class="c-textarea" id="appeal-text"></textarea></div><div class="c-field"><label class="c-label" for="appeal-file">Add documents (optional)</label><input class="c-file" type="file" id="appeal-file"></div><button class="c-button" type="submit">Send appeal</button></form></div>' +
+      '<form id="f-appeal" novalidate><div class="c-field' + (err ? " c-field--error" : "") + '"><label class="c-label" for="appeal-text">Why do you disagree?</label><span class="c-hint">Explain in your own words. You can write in any language.</span>' + (err ? '<span class="c-error-msg">Write why you disagree</span>' : "") + '<textarea class="c-textarea" id="appeal-text"></textarea></div>' + docSlot("appeal-file", "Add documents (optional)", "", "any") + '<button class="c-button" type="submit">Send appeal</button></form></div>' +
       '<div class="c-card"><p class="c-card__title">Option 2: go to court</p><p>Go to the administrative courts (contencioso-administrativo) within <strong>2 months</strong>. You will usually need a lawyer. If you can\'t afford one, you can ask for free legal aid.</p></div>';
   }
 
@@ -421,7 +492,7 @@
   /* ================================================================== */
   /* SHELL                                                              */
   /* ================================================================== */
-  var ROUTES = { home: scrHome, signin: scrSignin, helpin: scrHelpIn, check: scrCheck, apply: scrApply, pay: scrPay, review: scrReview, done: scrDone, "case": scrCase, fix: scrFix, respond: scrRespond, appointment: scrAppt, card: scrCard, decision: scrDecision, messages: scrMessages, help: scrHelp };
+  var ROUTES = { home: scrHome, signin: scrSignin, helpin: scrHelpIn, check: scrCheck, apply: scrApply, pay: scrPay, precheck: scrPrecheck, review: scrReview, done: scrDone, "case": scrCase, fix: scrFix, respond: scrRespond, appointment: scrAppt, card: scrCard, decision: scrDecision, messages: scrMessages, help: scrHelp };
 
   function header(route) {
     var k = c(), lang = S().lang;
@@ -507,14 +578,16 @@
     }
     if (f.id === "f-review") {
       if (!f.querySelector("#declare").checked) { session.errors.review = true; return render(); }
-      var res = R.submit(k.id, { changed: d.changed || Object.keys(d.notes).length > 0, changeText: d.changeText, eligibility: { employer: d.elig.employer, madrid: d.elig.madrid, record: d.elig.record }, channel: d.channel });
+      var res = R.submit(k.id, { changed: d.changed || Object.keys(d.notes).length > 0, changeText: d.changeText, eligibility: { employer: d.elig.employer, madrid: d.elig.madrid, record: d.elig.record }, channel: d.channel, feeFixed: !!d.feeTopUp, preDoc: docName("pc-doc") });
       if (res.error) return go("case");
       return go("done");
     }
     if (f.classList.contains("f-respond")) {
       var fid = f.getAttribute("data-f"), txt = f.querySelector("textarea").value.trim(), file = f.querySelector("input[type=file]");
       if (!txt) { session.errors.respond = true; return render(); }
-      R.respondFlag(k.id, fid, txt, file && file.files[0] ? file.files[0].name : null);
+      var blk = docBlocked("file-" + fid);
+      if (blk) { toast(blk === "pending" ? "Wait for the document check to finish" : "Replace the document first: it can't be sent"); return render(); }
+      R.respondFlag(k.id, fid, txt, docName("file-" + fid));
       toast("Answer sent"); return go("case");
     }
     if (f.id === "f-resched") {
@@ -525,6 +598,7 @@
     if (f.id === "f-appeal") {
       var at = f.querySelector("#appeal-text").value.trim();
       if (!at) { session.errors.appeal = true; return render(); }
+      if (docBlocked("appeal-file")) { toast("Replace the document first: it can't be sent"); return render(); }
       R.appeal(k.id, at); toast("Appeal sent"); return render();
     }
   });
@@ -533,9 +607,14 @@
     var b = e.target.closest("[data-act],[data-demo]");
     if (!b) return;
     var k = c(), d = draft(), act = b.getAttribute("data-act"), demo = b.getAttribute("data-demo");
+    if (act === "pc-topup") { d.feeTopUp = true; toast("Difference paid. Fee complete."); return render(); }
+    if (act === "pc-savechange") { var v2 = app.querySelector("#pc-change").value.trim(); if (v2) { d.changeText = v2; toast("Saved"); } return render(); }
+    if (act === "pc-rerun") { session.pc = null; return render(); }
+    if (act === "pc-continue") { d.checked = true; return go("review"); }
     if (act === "wrong") { session.wrongField = +b.getAttribute("data-i"); return render(); }
     if (act === "save-wrong") { var i = +b.getAttribute("data-i"), v = app.querySelector("#wrong-" + i).value.trim(); if (v) d.notes[i] = v; else delete d.notes[i]; session.wrongField = null; toast(v ? "Thanks. An officer will check this." : "Removed"); return render(); }
-    if (act === "pay") { d.paid = true; d.paidMode = b.getAttribute("data-mode"); toast("Payment recorded"); return go("review"); }
+    if (act === "pay") { d.paid = true; d.paidMode = b.getAttribute("data-mode"); toast("Payment recorded"); session.pc = null; return go("precheck"); }
+    if (act === "pay-fix" && !k.fix.amount && (docBlocked("fix-file") || !docName("fix-file"))) { toast(docBlocked("fix-file") === "pending" ? "Wait for the document check to finish" : "Add a file that passes the check first"); return; }
     if (act === "pay-fix") { R.payFix(k.id); toast("Done. Your clock has restarted."); return go("fix"); }
     if (act === "explain") { var key = b.getAttribute("data-k"); session.explain[key] = !session.explain[key]; return render(); }
     if (act === "assisted-request") { toast("Request sent. We'll call you within 2 working days."); return render(); }
@@ -543,13 +622,25 @@
     if (demo === "d1") { R.advance(1); toast("1 day later"); return; }
     if (demo === "d7") { R.advance(7); toast("7 days later"); return; }
     if (demo === "assisted") { R.setPref("assisted", !S().assisted); return; }
-    if (demo === "reset") { session = { signedIn: {}, draft: {}, toast: "Demo reset", explain: {}, wrongField: null, errors: {} }; R.reset(); location.hash = "home"; return; }
+    if (demo === "reset") { session = { signedIn: {}, draft: {}, toast: "Demo reset", explain: {}, wrongField: null, errors: {}, docs: {} }; R.reset(); location.hash = "home"; return; }
     if (demo === "off-ask") { R.confirmFlag(k.id, "f1", "Please explain the gap in contributions.", "Officer M. García"); toast("The officer asked Lucía a question"); return; }
     if (demo === "off-grant") { if (k.flags[0] && k.flags[0].officer === "confirmed") R.dismissFlag(k.id, "f1", "Explained: job change, new contract provided", "Officer M. García"); R.decide(k.id, "granted", "Reviewed by officer", "Officer M. García"); toast("The officer granted the renewal"); return; }
     if (demo === "off-refuse") { var r = R.decide(k.id, "refused", "Not enough income to meet the family reunification requirement during the period.", "Officer M. García"); toast(r.error ? "Refusal not allowed yet" : "The officer refused the renewal"); return; }
   });
 
   app.addEventListener("change", function (e) {
+    if (e.target.classList && e.target.classList.contains("js-doccheck")) {
+      var inp = e.target, id = inp.id, out = document.getElementById(id + "-result"), file = inp.files && inp.files[0];
+      if (!file) { delete session.docs[id]; if (out) out.innerHTML = ""; return; }
+      session.docs[id] = { pending: true };
+      if (out) out.innerHTML = '<p class="t-small t-secondary" role="status" style="margin-top:8px">Checking ' + esc(file.name) + "…</p>";
+      window.DocCheck.check(file, inp.getAttribute("data-expect")).then(function (res) {
+        session.docs[id] = { result: res };
+        var o = document.getElementById(id + "-result"); if (o) o.innerHTML = window.DocCheck.render(res);
+        if (id === "pc-doc" && res.status !== "error") setTimeout(render, 1600);
+      });
+      return;
+    }
     if (e.target.id === "lang") { R.setPref("lang", e.target.value); }
     if (e.target.id === "demo-persona") { R.setPref("persona", e.target.value); session.wrongField = null; go("home"); }
   });
