@@ -3,7 +3,7 @@
    -------------------------------------------------------------------------
    The shared case model lives in ../js/data.js (window.RRS). This file never
    changes it. It adds what only staff see, keyed by case id:
-     - channel, language and identity method (derived when not set)
+     - channel, language and identity method (seeded in data.js, derived when not set)
      - extra evidence for the stress cases (uploads, chip reads)
      - abuse and fraud signals
      - the readable rule list with legal basis and version
@@ -81,7 +81,7 @@
       signal: { type: "Very long AI-assistant submission", detail: "40-page cover letter written with an AI assistant. Most pages are not relevant to the renewal.",
         system: "The officer works from the structured data and checks. The AI summary links every line to its source and is never the basis of a decision. Nobody is penalised for using an assistant.",
         actions: ["Review structured data only", "No action needed"] } },
-    s22: { label: "Late filer", channel: "assisted", language: "Arabic", identity: "certificate", expiry: -65,
+    s22: { label: "Late filer", channel: "assisted", language: "Arabic", identity: "certificate", expiry: -66,
       signal: { type: "Filed after the permit expired", detail: "Filed 35 days after expiry. That is inside the 3-month late window, so the renewal is accepted.",
         system: "Accepted and routed to a person. Any sanction for filing late is a separate procedure and never a reason to refuse here.",
         actions: ["Continue review", "Open separate sanction file"] } },
@@ -120,11 +120,11 @@
   /* Officer-only facts for one case (never written back to shared state) */
   function meta(c) {
     var s = STRESS[c.id] || {}, p = PERSONA[c.id] || {}, h = hash(c.id);
-    var ch = s.channel || (c.answers && c.answers.channel === "assisted" ? "assisted" : null) || (h % 100 < 70 ? "online" : h % 100 < 88 ? "assisted" : "in person");
+    var ch = s.channel || c.channel || (c.answers && c.answers.channel === "assisted" ? "assisted" : null) || (h % 100 < 70 ? "online" : h % 100 < 88 ? "assisted" : "in person");
     var identity = s.identity || p.identity || (ch === "in person" ? "in person" : ["Cl@ve", "Cl@ve", "Cl@ve", "certificate", "NFC"][h % 5]);
     return {
       channel: ch,
-      language: s.language || p.language || LANGS[h % LANGS.length],
+      language: s.language || p.language || c.language || LANGS[h % LANGS.length],
       identity: identity,
       representative: s.representative || null,
       label: s.label || null,

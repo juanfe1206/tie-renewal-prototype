@@ -140,64 +140,180 @@
     ];
   }
 
-  /* ---- ~50 synthetic background cases for the officer queue ----------- */
+  /* ---- Synthetic background cases for the officer queue ---------------
+     Hand-tuned so the dashboard looks like a working service on day 0:
+     ~48 decided files (history) and ~20 open files across every stage.
+     Days are relative to the demo clock (0 = today). Channel and language
+     are officer-side facts used by the fairness panel; nationality is
+     never stored. Ids s0, s4, s9 ... are the stress cases in
+     officer/officer-data.js, so keep them on the same specs. */
   function synthetic() {
     var r = rng(20261125);
     var first = ["Wei","Fatima","Juan Carlos","Olena","Mohammed","Ana Lucía","Rahul","Mariam","Diego","Ngozi","Sofía","Bilal","Irina","Kofi","Valentina","Hao","Yasmin","Andrés","Priya","Omar","Camila","Tariq","Elena","Samuel","Aisha"];
     var last = ["Zhang","Benali","Rojas","Kovalenko","Haddad","Mendoza","Sharma","Diallo","Herrera","Okafor","Castillo","Rahman","Popescu","Mensah","Gutiérrez","Liu","Saleh","Morales","Patel","Farouk","Ruiz","Nwosu","Vargas","Ibrahim","Torres"];
-    var permits = [["work","Residence and work (employee)"],["work","Residence and work (employee)"],["self","Residence and work (self-employed)"],["family","Family reunification"],["nonlucrative","Non-lucrative residence"]];
-    var out = [];
-    for (var i = 0; i < 50; i++) {
-      var p = permits[Math.floor(r() * permits.length)];
-      var x = r();
-      var route = x < 0.6 ? "auto" : x < 0.85 ? "human" : "fix";
-      var filed = -Math.floor(r() * 84) - 1;
+    var PERMITS = { work: "Residence and work (employee)", self: "Residence and work (self-employed)", family: "Family reunification", nonlucrative: "Non-lucrative residence" };
+    var PK = ["work", "work", "self", "work", "family", "nonlucrative", "work"];
+    var OFF = ["Officer M. García", "Officer L. Pérez", "Officer S. Navarro (supervisor)"];
+    var GROUNDS = {
+      address:  ["Address doesn't match the municipal register", "Registered address differs from the one on the application.", "Address"],
+      ss:       ["Social Security record doesn't match", "Gap in contributions in the last 6 months.", "Social Security"],
+      employer: ["Employer details don't match", "Employer on the application is not the one in Social Security.", "Social Security"]
+    };
+    var specs = [];
+    function add(o) { specs.push(o); }
+
+    /* -- Decided: clear-cut, granted by the rules engine (32) ------------
+       [language, channel, days to decision]; 28 of 32 within 48 h */
+    var A = [
+      ["Spanish","online",1],["Spanish","online",2],["Spanish","assisted",1],["Spanish","in person",1],["Spanish","online",3],["Spanish","online",1],
+      ["English","online",1],["English","assisted",2],["English","online",1],["English","online",4],
+      ["Arabic","assisted",1],["Arabic","online",2],["Arabic","in person",2],["Arabic","online",3],
+      ["French","online",1],["French","assisted",2],["French","in person",1,"s4"],
+      ["Portuguese","online",2],["Portuguese","online",1],["Portuguese","assisted",1],
+      ["Chinese","online",1],["Chinese","assisted",3],["Chinese","online",2],
+      ["Romanian","online",2],["Romanian","in person",1],["Romanian","online",1],
+      ["Ukrainian","online",1,"s20"],["Ukrainian","assisted",2],["Ukrainian","online",2],
+      ["Urdu","online",2],["Urdu","assisted",1],["Urdu","online",1]
+    ];
+    var autoFiled = [-84,-80,-77,-74,-71,-68,-65,-62,-59,-56,-53,-50,-48,-45,-43,-40,-37,-35,-32,-30,-27,-25,-22,-20,-18,-15,-13,-11,-9,-8,-5,-3];
+    A.forEach(function (a, k) {
+      var filed = a[3] === "s20" ? -6 : a[3] === "s4" ? -16 : autoFiled[k];
+      add({ id: a[3], kind: "auto", language: a[0], channel: a[1], d: a[2], filed: filed });
+    });
+
+    /* -- Decided: automatic grant after a fix-it loop (5) --------------- */
+    add({ id: "s9", kind: "fixed", language: "Spanish", channel: "online", filed: -47, d: 4, paused: 3, what: "Passport number doesn't match the police record", why: "The scan was unreadable. Scan the passport chip with your phone or bring it to any office." });
+    add({ kind: "fixed", language: "English", channel: "online", filed: -60, d: 3, paused: 4, what: "Unreadable passport scan", why: "We need to see the photo page clearly." });
+    add({ kind: "fixed", language: "Arabic", channel: "assisted", filed: -33, d: 2, paused: 2, what: "Fee 790-012 paid with the wrong code", why: "The payment used the code for a first application, not a renewal.", amount: 0 });
+    add({ kind: "fixed", language: "Portuguese", channel: "in person", filed: -24, d: 3, paused: 5, what: "Unreadable passport scan", why: "We need to see the photo page clearly." });
+    add({ kind: "fixed", language: "Spanish", channel: "online", filed: -12, d: 2, paused: 3, what: "Fee 790-012 not received", why: "The bank hasn't confirmed the payment yet. Upload the receipt." });
+
+    /* -- Decided: reviewed by an officer (11; one past target, one refused) */
+    add({ kind: "human", language: "Spanish",   channel: "online",    filed: -86, d: 18, g: "address",  officer: 0 });
+    add({ kind: "human", language: "English",   channel: "online",    filed: -82, d: 34, g: "ss",       officer: 1 });
+    add({ kind: "human", language: "Arabic",    channel: "online",    filed: -75, d: 21, g: "employer", officer: 2 });
+    add({ kind: "human", language: "Chinese",   channel: "online",    filed: -66, d: 15, g: "address",  officer: 0 });
+    add({ kind: "human", language: "Romanian",  channel: "online",    filed: -58, d: 24, g: "ss",       officer: 2, refused: true });
+    add({ kind: "human", language: "Urdu",      channel: "assisted",  filed: -79, d: 19, g: "ss",       officer: 1 });
+    add({ kind: "human", language: "Arabic",    channel: "assisted",  filed: -63, d: 17, g: "employer", officer: 0 });
+    add({ kind: "human", language: "Portuguese",channel: "assisted",  filed: -52, d: 22, g: "address",  officer: 1 });
+    add({ kind: "human", language: "Ukrainian", channel: "assisted",  filed: -44, d: 16, g: "ss",       officer: 0 });
+    add({ kind: "human", language: "French",    channel: "in person", filed: -70, d: 20, g: "address",  officer: 2 });
+    add({ kind: "human", language: "Spanish",   channel: "in person", filed: -41, d: 14, g: "employer", officer: 1 });
+
+    /* -- Open: the live queue (20) ------------------------------------- */
+    // Filed today: gestoría batch (4 in 38 minutes) and one clear-cut file
+    add({ id: "s12", kind: "open", stage: "filed", language: "Urdu",       channel: "assisted", filed: 0 });
+    add({ id: "s27", kind: "open", stage: "filed", language: "Arabic",     channel: "assisted", filed: 0 });
+    add({ id: "s34", kind: "open", stage: "filed", language: "Portuguese", channel: "assisted", filed: 0 });
+    add({ id: "s44", kind: "open", stage: "filed", language: "Romanian",   channel: "assisted", filed: 0 });
+    add({ kind: "open", stage: "filed", auto: 1, language: "Spanish", channel: "online", filed: 0 });
+    // Under review
+    add({ kind: "open", stage: "review", auto: 2, language: "English", channel: "assisted", filed: -1 });
+    add({ id: "s31", kind: "open", stage: "review", language: "Chinese",   channel: "online", filed: -1 });
+    add({ id: "s36", kind: "open", stage: "review", language: "Ukrainian", channel: "online", filed: -1 });
+    add({ id: "s0",  kind: "open", stage: "review", language: "Spanish", channel: "online", filed: -5, flag: ["Uploaded payslips may have been altered", "Payslip PDF edited after creation; the salary is 2.3 times the Social Security base.", "Social Security"], ev: "Payslips, Jul–Sep 2026 (upload) vs Social Security base" });
+    add({ id: "s48", kind: "open", stage: "review", language: "Chinese", channel: "online", filed: -3, flag: ["Uploaded employer letter failed the tamper check", "Hidden text on page 2 of the employer letter. Quarantined; no model read it.", "Social Security"], ev: "Employer letter (upload), page 2", ssOk: true });
+    add({ id: "s13", kind: "open", stage: "review", language: "English", channel: "online", filed: -12, g: "ss" });
+    add({ kind: "open", stage: "review", language: "Spanish", channel: "in person", filed: -8, g: "address" });
+    add({ id: "s22", kind: "open", stage: "review", late: true, language: "Arabic", channel: "assisted", filed: -31, expiry: -66 });
+    add({ kind: "open", stage: "review", language: "Spanish", channel: "online", filed: -38, g: "ss", asked: -30, reply: -24 });
+    add({ kind: "open", stage: "review", language: "English", channel: "assisted", filed: -57, g: "employer", asked: -50 });
+    add({ kind: "open", stage: "review", language: "Chinese", channel: "online", filed: -62, g: "address", asked: -54, reply: -47 });
+    // Waiting for the applicant's answer to a flag
+    add({ kind: "open", stage: "response", language: "French", channel: "online", filed: -14, g: "employer", asked: -4 });
+    add({ kind: "open", stage: "response", language: "Arabic", channel: "assisted", filed: -20, g: "ss", asked: -2 });
+    // Fix needed, clock paused
+    add({ kind: "open", stage: "fix", language: "English", channel: "online", filed: -4, pause: -3, what: "Unreadable passport scan", why: "We need to see the photo page clearly.", amount: 0 });
+    add({ kind: "open", stage: "fix", language: "Romanian", channel: "online", filed: -6, pause: -5, what: "The fee you paid is €2.10 short", why: "The renewal fee went up on 1 November. You paid the old amount.", amount: 2.10 });
+
+    /* -- Build cases ---------------------------------------------------- */
+    var used = {}; specs.forEach(function (s) { if (s.id) used[s.id] = 1; });
+    var next = 0;
+    function freeId() { while (used["s" + next]) next++; used["s" + next] = 1; return "s" + next; }
+    function apptFor(c, dd, k) {
+      c.appt = { office: OFFICES[k % 3].id, day: dd + RULES.apptWithinDays, time: ["09:10", "09:40", "10:20", "11:30", "12:00", "12:40"][k % 6], resched: false };
+      c.status = "appt"; c.history.push([dd, "Fingerprint appointment assigned"]);
+      if (c.appt.day < 0) c.history.push([c.appt.day + 1, "Fingerprints taken"]);
+      if (c.appt.day + RULES.cardAfterApptDays <= 0) { c.status = "card"; c.history.push([c.appt.day + RULES.cardAfterApptDays, "TIE card ready to collect"]); }
+    }
+    function flagOf(g, s) {
+      var G = s.flag || GROUNDS[g];
+      return { id: "f1", ground: G[0], found: G[1], rule: "Renewal requirements, RD 1155/2024", evidence: s.ev || "Source record (PID)", officer: null, officerReason: "", sent: null, deadline: null, response: null, responseFile: null };
+    }
+    return specs.map(function (s, k) {
+      var id = s.id || freeId();
+      var n = parseInt(id.slice(1), 10);
+      var pk = PK[k % PK.length];
+      var mismatch = s.flag ? (s.ssOk ? null : s.flag[2]) : s.g ? GROUNDS[s.g][2] : null;
       var c = {
-        id: "s" + i, ref: "MAD-2026-" + (100100 + i * 13), persona: false, synthetic: true,
+        id: id, ref: "MAD-2026-" + (100100 + n * 13), persona: false, synthetic: true,
         name: first[Math.floor(r() * first.length)] + " " + last[Math.floor(r() * last.length)],
         nie: (r() < .5 ? "X" : "Y") + String(1000000 + Math.floor(r() * 8999999)) + "ABCDEFGHJKLMNPQRSTVWXYZ"[Math.floor(r() * 23)],
-        permit: p[0], permitLabel: p[1], expiry: filed + 30 + Math.floor(r() * 30),
-        route: route, filed: filed, status: "review", pausedTotal: 0, pauseStart: null,
-        checks: [["Identity","PID","green"],["Permit history","PID","green"],["Social Security","PID", route === "human" ? "mismatch" : "green"],["Address","PID","green"],["Criminal record","PID","green"]],
-        fix: null, flags: [], appt: null, decision: null, appeal: null, history: [[filed, "Application filed online"]], messages: [], data: [], read: {}
+        permit: pk, permitLabel: PERMITS[pk], expiry: s.expiry != null ? s.expiry : s.filed + 25 + (k * 7) % 34,
+        channel: s.channel, language: s.language,
+        route: s.kind === "auto" || s.auto ? "auto" : s.kind === "fixed" || s.stage === "fix" ? "fix" : "human",
+        filed: s.filed, status: s.filed === 0 ? "filed" : "review", pausedTotal: 0, pauseStart: null, decideAfter: s.auto || null,
+        checks: [["Identity","PID","green"],["Permit history","PID","green"],["Social Security","PID", mismatch === "Social Security" ? "mismatch" : "green"],["Address","PID", mismatch === "Address" ? "mismatch" : "green"],["Criminal record","PID","green"]],
+        fix: null, flags: [], appt: null, decision: null, appeal: null, messages: [], data: [], read: {},
+        history: [[s.filed, s.late ? "Application filed with assistance, 35 days after the permit expired (inside the 3-month late window)" : s.channel === "assisted" ? "Application filed with assistance" : s.channel === "in person" ? "Application filed at the Extranjería desk" : "Application filed online"]]
       };
-      var age = -filed;
-      if (route === "auto") {
-        var d = 1 + Math.floor(r() * 4);
-        c.decideAfter = d;
-        if (age > d) {
-          c.decision = { type: "granted", by: "Rules engine", day: filed + d, reason: "All checks passed" };
-          c.status = "granted"; c.history.push([filed + d, "Granted automatically"]);
-          var ad = filed + d + RULES.apptWithinDays;
-          c.appt = { office: OFFICES[i % 3].id, day: ad, time: "09:" + (10 + (i % 5) * 10), resched: false };
-          c.status = age > (d + RULES.apptWithinDays + RULES.cardAfterApptDays) ? "card" : "appt";
+      if (s.filed < 0) c.history.push([s.filed + 1, "Under review"]);
+      var who = OFF[s.officer != null ? s.officer : k % 2];
+      if (s.kind === "auto") {
+        c.decideAfter = s.d;
+        c.decision = { type: "granted", by: "Rules engine", day: s.filed + s.d, reason: "All checks passed" };
+        c.history.push([s.filed + s.d, "Granted automatically"]);
+        apptFor(c, s.filed + s.d, k);
+      } else if (s.kind === "fixed") {
+        c.fix = { what: s.what, why: s.why, amount: s.amount || 0, deadline: s.filed + 1 + RULES.fixDeadlineDays, done: true, doneDay: s.filed + 1 + s.paused };
+        c.pausedTotal = s.paused; c.route = "fix";
+        var fd = s.filed + s.d + s.paused;
+        c.history.push([s.filed + 1, "Fix needed: " + s.what + ". Clock paused."], [s.filed + 1 + s.paused, "Fix completed. Clock restarted."], [fd, "Granted automatically"]);
+        c.decision = { type: "granted", by: "Rules engine", day: fd, reason: "All checks passed after fix" };
+        apptFor(c, fd, k);
+      } else if (s.kind === "human") {
+        var f = flagOf(s.g, s), dd = s.filed + s.d;
+        if (s.refused) {
+          f.officer = "confirmed"; f.officerReason = "Contributions stopped and no new contract on record"; f.sent = s.filed + 6; f.deadline = f.sent + RULES.flagResponseDays;
+          f.response = "I am looking for work and expect a new contract soon."; f.responseDay = s.filed + 12;
+          c.flags = [f]; c.status = "refused";
+          c.decision = { type: "refused", by: who, day: dd, reason: "Income requirement not met after the applicant's answer (RD 1155/2024)" };
+          c.history.push([f.sent, "An officer asked you about: " + f.ground], [f.responseDay, "You responded to: " + f.ground], [dd, "Renewal refused"]);
+        } else {
+          f.officer = "dismissed"; f.officerReason = ["Explained by the applicant", "Source record updated after the filing", "New contract confirmed in Social Security"][k % 3];
+          c.flags = [f];
+          c.decision = { type: "granted", by: who, day: dd, reason: "Reviewed by officer" };
+          c.history.push([dd, "Officer cleared: " + f.ground], [dd, "Renewal granted"]);
+          apptFor(c, dd, k);
         }
-      } else if (route === "fix") {
-        c.fix = { what: "Unreadable passport scan", why: "We need to see the photo page clearly.", amount: 0, deadline: filed + 2 + RULES.fixDeadlineDays, done: age > 6 };
-        if (c.fix.done) { c.decision = { type: "granted", by: "Rules engine", day: filed + 7, reason: "All checks passed after fix" }; c.status = "appt"; c.appt = { office: OFFICES[i % 3].id, day: filed + 14, time: "11:30", resched: false }; if (age > 28) c.status = "card"; }
-        else { c.status = "fix"; c.pauseStart = filed + 2; }
       } else {
-        var grounds = [["Address doesn't match the municipal register","Registered address differs from the one on the application."],["Social Security record doesn't match","Gap in contributions in the last 6 months."],["Employer details don't match","Employer on the application is not the one in Social Security."]];
-        var g = grounds[Math.floor(r() * grounds.length)];
-        c.flags = [{ id: "f1", ground: g[0], found: g[1], rule: "Renewal requirements, RD 1155/2024", evidence: "Source record", officer: null, officerReason: "", sent: null, deadline: null, response: null, responseFile: null }];
-        if (age > 40 && r() < .7) {
-          var dd = 12 + Math.floor(r() * 25);
-          c.flags[0].officer = "dismissed"; c.flags[0].officerReason = "Explained by the applicant";
-          c.decision = { type: r() < .9 ? "granted" : "refused", by: "Officer " + ["M. García","L. Pérez","S. Navarro"][i % 3], day: filed + dd, reason: "Reviewed" };
-          c.status = c.decision.type === "granted" ? "appt" : "refused";
-          if (c.status === "appt") c.appt = { office: OFFICES[i % 3].id, day: filed + dd + 7, time: "12:00", resched: false };
+        if (s.g || s.flag) {
+          var fo = flagOf(s.g, s);
+          if (s.asked != null) {
+            fo.officer = "confirmed"; fo.officerReason = "Needs the applicant's explanation"; fo.sent = s.asked; fo.deadline = s.asked + RULES.flagResponseDays;
+            c.history.push([s.asked, "An officer asked you about: " + fo.ground]);
+            if (s.reply != null) { fo.response = "I changed jobs; the new contract is attached."; fo.responseFile = "contract.pdf"; fo.responseDay = s.reply; c.history.push([s.reply, "You responded to: " + fo.ground]); }
+          } else c.history.push([s.filed + 1, "One check needs an officer to look"]);
+          c.flags = [fo];
+          if (s.stage === "response") c.status = "response";
+        }
+        if (s.stage === "fix") {
+          c.fix = { what: s.what, why: s.why, amount: s.amount, deadline: s.pause + RULES.fixDeadlineDays, done: false };
+          c.status = "fix"; c.pauseStart = s.pause;
+          c.history.push([s.pause, "Fix needed: " + s.what + ". Clock paused."]);
         }
       }
-      out.push(c);
-    }
-    return out;
+      c.history.sort(function (a, b) { return a[0] - b[0]; });
+      return c;
+    });
   }
 
   /* ---- State ---------------------------------------------------------- */
   function fresh() {
     var list = personas().concat(synthetic());
     var p = personas();
-    return { v: 1, day: 0, cases: list, audit: [], sample: [], lang: "en", assisted: false, persona: "amina" };
+    return { v: 2, day: 0, cases: list, audit: [], sample: [], lang: "en", assisted: false, persona: "amina" };
   }
 
   var listeners = [];
@@ -209,7 +325,7 @@
   api.load = function () {
     var s = null;
     try { s = JSON.parse(localStorage.getItem(STORAGE_KEY)); } catch (e) {}
-    api.state = s && s.v === 1 ? s : fresh();
+    api.state = s && s.v === 2 ? s : fresh();
     return api.state;
   };
   api.reset = function () { var keep = api.state ? { lang: api.state.lang } : {}; api.state = fresh(); if (keep.lang) api.state.lang = keep.lang; emit(); };
@@ -274,6 +390,8 @@
         }
       }
       if (c.status === "response" && !c.decision && api.dayCount(c) >= RULES.legalLimitDays) grant(c, "Legal backstop", "No decision within 90 days", true);
+      // a post-grant flag whose window closed: back to the granted status
+      if (c.status === "response" && c.decision && c.flags.every(function (f) { return f.officer !== "confirmed" || f.response || day > f.deadline; })) c.status = c.statusBefore || "appt";
       if (c.status === "appt" && c.appt && day === c.appt.day + 1) { log(c, "Fingerprints taken"); }
       if (c.status === "appt" && c.appt && day >= c.appt.day + RULES.cardAfterApptDays) {
         c.status = "card"; log(c, "TIE card ready to collect");
@@ -331,7 +449,8 @@
     log(c, "You responded to: " + f.ground);
     msg(c, "Response received", "An officer will read it and decide. Nothing is refused before an officer reads your response.");
     audit(c, "Citizen", "Responded to flag");
-    c.status = "review";
+    c.status = c.decision ? (c.statusBefore || "appt") : "review";
+    if (c.decision) delete c.statusBefore;
     emit();
   };
 
@@ -368,7 +487,8 @@
   api.dismissFlag = function (id, flagId, reason, officer) {
     var c = api.getCase(id); var f = c.flags.find(function (x) { return x.id === flagId; });
     f.officer = "dismissed"; f.officerReason = reason;
-    if (c.status === "response") c.status = "review";
+    if (c.status === "response") c.status = c.decision ? (c.statusBefore || "appt") : "review";
+    if (c.decision) delete c.statusBefore;
     log(c, "Officer cleared: " + f.ground);
     audit(c, officer || "Officer", "Flag dismissed: " + reason);
     emit();
@@ -412,7 +532,8 @@
   };
   api.drawSample = function (n) {
     var pool = api.state.cases.filter(function (c) { return c.decision && c.decision.by === "Rules engine" && !c.sampled; });
-    var picked = [];
+    // a persona auto-grant always joins the sample, so the citizen side can show a spot check
+    var picked = pool.filter(function (c) { return c.persona; }).slice(0, n || 5);
     while (picked.length < Math.min(n || 5, pool.length)) { var c = pool[Math.floor(Math.random() * pool.length)]; if (picked.indexOf(c) < 0) picked.push(c); }
     picked.forEach(function (c) { c.sampled = true; c.sampleResult = null; });
     api.state.sample = picked.map(function (c) { return c.id; });
@@ -424,6 +545,9 @@
     if (result === "problem") {
       var f = { id: "f" + (c.flags.length + 1), ground: "Post-grant check: " + (note || "information needs confirming"), found: note || "", rule: "Post-grant sampling", evidence: "Audit note", officer: "confirmed", officerReason: note || "", sent: api.state.day, deadline: api.state.day + RULES.flagResponseDays, response: null };
       c.flags.push(f);
+      // the citizen gets a respond task (same flag-card flow); the grant stays valid
+      if (c.status !== "response") c.statusBefore = c.status;
+      c.status = "response";
       log(c, "A spot check found something to confirm. Nothing is revoked before you respond.");
       msg(c, "Please confirm something about your renewal", "A random spot check found: " + (note || "something to confirm") + ". Your renewal stays valid while you respond.");
     }
