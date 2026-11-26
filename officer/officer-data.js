@@ -81,7 +81,7 @@
       signal: { type: "Very long AI-assistant submission", detail: "40-page cover letter written with an AI assistant. Most pages are not relevant to the renewal.",
         system: "The officer works from the structured data and checks. The AI summary links every line to its source and is never the basis of a decision. Nobody is penalised for using an assistant.",
         actions: ["Review structured data only", "No action needed"] } },
-    s22: { label: "Late filer", channel: "assisted", language: "Arabic", identity: "certificate", expiry: -66,
+    s22: { label: "Late filer", channel: "assisted", language: "Arabic", identity: "certificate", expiry: -59,
       signal: { type: "Filed after the permit expired", detail: "Filed 35 days after expiry. That is inside the 3-month late window, so the renewal is accepted.",
         system: "Accepted and routed to a person. Any sanction for filing late is a separate procedure and never a reason to refuse here.",
         actions: ["Continue review", "Open separate sanction file"] } },

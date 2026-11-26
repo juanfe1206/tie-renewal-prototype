@@ -190,7 +190,7 @@
 
     /* -- Decided: reviewed by an officer (11; one past target, one refused) */
     add({ kind: "human", language: "Spanish",   channel: "online",    filed: -86, d: 18, g: "address",  officer: 0 });
-    add({ kind: "human", language: "English",   channel: "online",    filed: -82, d: 34, g: "ss",       officer: 1 });
+    add({ kind: "human", language: "English",   channel: "online",    filed: -82, d: 29, g: "ss",       officer: 1 });
     add({ kind: "human", language: "Arabic",    channel: "online",    filed: -75, d: 21, g: "employer", officer: 2 });
     add({ kind: "human", language: "Chinese",   channel: "online",    filed: -66, d: 15, g: "address",  officer: 0 });
     add({ kind: "human", language: "Romanian",  channel: "online",    filed: -58, d: 24, g: "ss",       officer: 2, refused: true });
@@ -216,11 +216,11 @@
     add({ id: "s48", kind: "open", stage: "review", language: "Chinese", channel: "online", filed: -3, flag: ["Uploaded employer letter failed the tamper check", "Hidden text on page 2 of the employer letter. Quarantined; no model read it.", "Social Security"], ev: "Employer letter (upload), page 2", ssOk: true });
     add({ id: "s13", kind: "open", stage: "review", language: "English", channel: "online", filed: -12, g: "ss" });
     add({ kind: "open", stage: "review", language: "Spanish", channel: "in person", filed: -8, g: "address" });
-    add({ id: "s22", kind: "open", stage: "review", late: true, language: "Arabic", channel: "assisted", filed: -31, expiry: -66 });
-    add({ kind: "open", stage: "review", language: "Spanish", channel: "online", filed: -38, g: "ss", asked: -30, reply: -24 });
-    add({ kind: "open", stage: "review", language: "English", channel: "assisted", filed: -57, g: "employer", asked: -50 });
-    add({ kind: "open", stage: "review", language: "Chinese", channel: "online", filed: -62, g: "address", asked: -54, reply: -47 });
-    // Waiting for the applicant's answer to a flag
+    add({ id: "s22", kind: "open", stage: "review", late: true, language: "Arabic", channel: "assisted", filed: -24, expiry: -59 });
+    add({ kind: "open", stage: "review", language: "Spanish", channel: "online", filed: -16, g: "ss", asked: -9, reply: -3 });
+    add({ kind: "open", stage: "review", language: "Chinese", channel: "online", filed: -26, g: "address", asked: -14, reply: -8 });
+    // Waiting for the applicant's answer to a flag (the oldest open file, day 33: asked twice)
+    add({ kind: "open", stage: "response", language: "English", channel: "assisted", filed: -33, g: "employer", asked: -6 });
     add({ kind: "open", stage: "response", language: "French", channel: "online", filed: -14, g: "employer", asked: -4 });
     add({ kind: "open", stage: "response", language: "Arabic", channel: "assisted", filed: -20, g: "ss", asked: -2 });
     // Fix needed, clock paused
